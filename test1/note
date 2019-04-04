@@ -1,0 +1,18 @@
+.
+├── manage.py
+└── test1
+    ├── __init__.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+
+manage.py
+    用来管理整个项目
+test1
+    是和项目名 test1同名的一个模块
+__init__.py
+    表明test1是一个python包
+
+以后想增加新模块就自己在例外建立，模块test1是用来作该项目基本配置的
+
+
