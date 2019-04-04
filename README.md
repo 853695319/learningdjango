@@ -46,8 +46,8 @@ docker run -p 8080:3306 --name mysql-data -v /home/chenzhixiong/09-django/learni
 意外发现，被docker挂载后的文件夹会被docker改变权限，只有docker用得了，我要用 chmod a+rwx -R * 修改权限才能使用
 所以以后docker挂载的目录应设置号具体地方，不要和本地数据库共用同一目录
 
-## Django-建立模型models
-### 1 在test1项目文件夹下创建booktest模块
+## Django-建立应用booktest 模型models 测试
+在test1项目文件夹下创建booktest模块
 ```
 python manage.py startapp booktest
 ```
@@ -153,3 +153,60 @@ BookInfo.objects.all()
 [<BookInfo: abc>]
 ```
 
+## Django-管理站点
+
+* 创建一个管理员用户
+```markdown
+python manage.py createsuperuser，按提示输入用户名、邮箱、密码
+
+username:abc
+password:123
+email:abc@163.com
+```
+* 运行web服务 默认端口：8000
+```markdown
+python manage.py runserver
+```
+通过http://127.0.0.1:8000/admin进入管理界面
+
+* 本地化
+在 settings.py 
+```markdown
+LANGUSGE_CODE = 'zh-hans'
+TIME_ZONE = 'Asia/Shanghai'
+```
+* 向admin注册booktest的模型
+test1/booktest/admin.py
+```
+from django.contrib import admin
+# python3 包的相对导入
+from .models import BookInfo, HeroInfo
+admin.site.register(BookInfo)
+admin.site.register(HeroInfo)
+```
+* 修改后台管理admin网页
+```markdown
+from django.contrib import admin
+# python3 包的相对导入
+from .models import BookInfo, HeroInfo
+
+
+class BookInfoAdmin(admin.ModelAdmin):
+    """定义BookInfo在网页的显示"""
+    # 展示页
+    list_display = ['id', 'btitle', 'bpub_date']
+    list_filter = ['btitle']
+    search_fields = ['btitle']
+    list_per_page = 1
+    # 修改页
+    fieldsets = [
+        ('base', {'fields': ['btitle']}),
+        ('super', {'fields': ['bpub_date']})
+    ]
+
+
+admin.site.register(BookInfo, BookInfoAdmin)
+admin.site.register(HeroInfo)
+# Register your models here.
+
+```
