@@ -373,6 +373,11 @@ admin.site.register(BookInfo, BookInfoAdmin)
 
 ```
 
+
+
+
+
+
 ## Django-视图view.py
 * 定义视图
 ```markdown
@@ -438,3 +443,84 @@ MVT会将`...`部分取出，用于路由匹配
 `url(r'^admin/', include(admin.site.urls))`
 
 先匹配 `admin/`，然后到 `admin.site.urls` 继续匹配
+
+
+
+
+
+## Django-模板templates
+* 定义模板
+
+新建目录`templates/my_app/xxx.html`
+
+注意`my_app`与应用模块同名！！
+
+所以我的目录为`test1/templates/booktest/index.html`
+
+* 添加模板路径
+```markdown
+# test1/setting.py
+
+# os.path.join(path, *path) --> 到这个目录下BASE_DIR/templates/ 查找模板
+# os.path.join('c:\\', 'csv', 'test.csv') --> 'c:\\csv\\test.csv' 
+'DIRS': [os.path.join(BASE_DIR, 'templates')],
+```
+
+* 添加模板
+```markdown
+# booktest/views.py
+
+from django.shortcuts import render
+# from django.http import HttpResponse
+# from django.template import RequestContext, loader
+
+
+def index(request):
+    """
+    :param request: HTTP请求
+    :return: HTTP响应
+    """
+    # 1 加载模板 注意路径的写法
+    # temp = loader.get_template('booktest/index.html')
+
+    # 2 渲染页面
+    # render_page = temp.render()  # render 渲染
+
+    # 3 将内容返回给浏览器
+    # return HttpResponse(render_page)
+    
+    # 一句话完成上面步骤
+    return render(request, template_name='booktest/index.html')
+```
+* views从models取得数据填入template中
+```markdown
+# booktest/views.py
+
+from django.shortcuts import render
+from .models import BookInfo, HeroInfo
+
+def index(request):
+    # 从models取得数据
+    bookList = BookInfo.objects.all()  # 取得全部图书对象
+    context = {'list': bookList}
+
+    # 将数据填入template
+    return render(request, template_name='booktest/index.html', context=context)
+
+
+
+# templates/booktest/index.html
+
+<ul>
+    {%for book in list%}
+    <li>{{book.btitle}}</li>
+    {%endfor%}
+</ul>
+```
+
+* 总结开发流程
+
+    1. 定义models类，生成迁移，生成迁移是为了生成表结构
+    2. 定义views,为了视图函数能被调用，需要配置URLs来匹配用户输入的网址
+    3. 定义templates，是为了呈现数据
+    4. views从models获得数据，把上下文context填入template，呈现网页

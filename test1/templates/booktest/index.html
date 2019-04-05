@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>hello world</h1>
+    <br>
+    <div style="width: 50%; background:gray; margin:20px auto; padding:15px 15px;">
+        <h2>输出数据</h2>
+        <ul>
+            {%for book in list%}
+            <li>{{book.btitle}}</li>
+            {%endfor%}
+        </ul>
+    </div>
+</body>
+</html>
