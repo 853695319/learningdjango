@@ -16,6 +16,18 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+# Add an import:  from my_app import views 按要求写导入，不用担心报错！！
+# from booktest import views
+
+
 urlpatterns = [
+    # include 写法，就是会去引入那个路径的urls (Including another URLconf)
+    # r'^admin/' 匹配 admin/...
     url(r'^admin/', include(admin.site.urls)),
+
+    # r'^$' 其实就是正则，匹配空，就相当于进入 view.index
+    # url(r'^$', views.index, name='index'),
+
+    # include 写法,关键在用单引号将 booktest.urls 引起来
+    url(r'^', include('booktest.urls'))
 ]
