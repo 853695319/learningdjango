@@ -329,6 +329,37 @@ class BookInfoAdmin(admin.ModelAdmin):
 admin.site.register(BookInfo, BookInfoAdmin)
 
 ```
+* 布尔值显示
+```markdown
+# booktest/admin.py
+
+class HeroInfo(models.Model):
+    """英雄结构"""
+    hname = models.CharField(max_length=10)
+    hgender = models.BooleanField()
+    hcontent = models.CharField(max_length=1000)
+    # 引入外键
+    hbook = models.ForeignKey(BookInfo)
+
+    def __str__(self):
+        return self.hname
+
+    def gender(self):
+        """布尔值显示性别"""
+        if self.hgender:
+            return "男"
+        else:
+            return "女"
+
+    gender.short_description = '性别'
+
+# booktest/admin.py
+
+class HeroInfoAdmin(admin.ModelAdmin):
+    list_display = ['hname', 'gender', 'hcontent', 'hbook']
+    
+admin.site.register(HeroInfo, HeroInfoAdmin)
+```
 
 
 

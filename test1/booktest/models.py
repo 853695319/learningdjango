@@ -26,6 +26,15 @@ class HeroInfo(models.Model):
     def __str__(self):
         return self.hname
 
+    def gender(self):
+        """布尔值显示性别"""
+        if self.hgender:
+            return "男"
+        else:
+            return "女"
+
+    gender.short_description = '性别'
+
 """
 In [1]: class Person(object):
    ...:     name = 'Person'
