@@ -7,50 +7,7 @@ test1 是django项目文件夹
 
 
 
-
-## 创建基于Docker的Mysql
-一开始用不到，开始用Django默认数据库 SQLite
-```
-docker run --name mysql-data \
-           -p 8080:3306 \
-           -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d \
-           -v /var/lib/mysql:/var/lib/mysql \
-           -e MYSQL_ROOT_PASSWORD="root" \
-           -d mysql:5.7 \
-           --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-```
-* 问题1：
-`ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)`
-
-* 问题2：
-莫名其妙的自动退出
-
-一步步测试
-```
-docker run --name mysql-1 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.7
-```
-登录mysql
-```
-mysql -u root -p my-secret-pw
-```
-
-```
-docker run -p 8080:3306 --name mysql-1 -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
-```
-测试远程连接需要用宿主机的IP地址，而不是容器里面的IP地址！
-```
-docker run -p 8080:3306 --name mysql-1 -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
-```
-成功映射配置
-```
-docker run -p 8080:3306 --name mysql-data -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d -v /home/chenzhixiong/09-django/learningdjango/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
-```
-开启不了
-```
-docker run -p 8080:3306 --name mysql-data -v /home/chenzhixiong/09-django/learningdjango/myconfig:/etc/mysql/mysql.conf.d -v /home/chenzhixiong/09-django/learningdjango/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -it mysql:5.7
-```
-意外发现，被docker挂载后的文件夹会被docker改变权限，只有docker用得了，我要用 chmod a+rwx -R * 修改权限才能使用
-所以以后docker挂载的目录应设置号具体地方，不要和本地数据库共用同一目录
+# Django-开发流程
 
 
 
@@ -518,9 +475,376 @@ def index(request):
 </ul>
 ```
 
-* 总结开发流程
+## Django-生成英雄展示页面
+* index.html设置链接
+```markdown
+<li><a href="{{book.id}}">{{book.btitle}}</a></li>
+```
+* views初步定义函数
+```markdown
+# booktest/views.py
 
-    1. 定义models类，生成迁移，生成迁移是为了生成表结构
-    2. 定义views,为了视图函数能被调用，需要配置URLs来匹配用户输入的网址
-    3. 定义templates，是为了呈现数据
-    4. views从models获得数据，把上下文context填入template，呈现网页
+def showhero(request, book_id):
+    hero_context = {}
+    return render(request, 'booktest/showhero.html', hero_context)
+
+```
+* template初步定义模板
+
+为测试链接是否能正确跳转到showhero.html
+
+* 配置路由URLs
+```markdown
+# booktest/urls.py
+
+# 为获取图书ID， ([0-9]+) 取得匹配结果，所以showhero接收两个参数，request和book.id
+# 如果不加括号，就得不到id，只接收1个参数request
+url(r'^([0-9]+)$', views.showhero, name='showhero'),
+
+```
+测试链接跳转
+
+* 进一步完善views.showhero函数
+```markdown
+# booktest/views.py
+
+def showhero(request, book_id):
+    """
+    :param request: HTTP请求
+    :param book_id: 图书的ID
+    :return: HTTP响应页面
+    """
+    # 1.要知道展示那本书
+    book = BookInfo.objects.get(pk=book_id)
+    
+    # 2.该书对应的所有英雄对象集合 注意用all()方法获得可遍历列表[]
+    hero_list = book.heroinfo_set.all()
+    hero_context = {'list': hero_list}
+    return render(request, 'booktest/showhero.html', hero_context)
+```
+可能遇到异常，提示```'RelatedManager' object is not iterable'```,
+检查下自己有没有，用`all()`方法获得列表
+* 进一步完善模板
+
+## Django-总结开发流程
+
+1. 定义models类，生成迁移，生成迁移是为了生成表结构,执行迁移
+2. 启用管理站点admin，要先把models注册到admin，然后添加一些数据上去，作测试
+3. 定义views,为了视图函数能被调用，需要配置URLs来匹配用户输入的网址
+4. 定义templates，是为了呈现数据
+5. views从models获得数据，把上下文context填入template，呈现网页
+
+PS：
+
+models.py定义的数据库只适用于**关系型数据库**，像Mongodb不适用；
+
+主要重复过程：定义模型类，定义视图，配置URLs，创建模板
+
+
+
+# MVT框架
+对MVT的三大块进行学习
+## MVT-模型models
+```markdown
+django-admin startproject test2
+```
+另外开启项目test2进行学习
+### 创建基于Docker的Mysql
+一开始用不到，开始用Django默认数据库 SQLite
+```
+docker run --name mysql-data \
+           -p 8080:3306 \
+           -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d \
+           -v /var/lib/mysql:/var/lib/mysql \
+           -e MYSQL_ROOT_PASSWORD="root" \
+           -d mysql:5.7 \
+           --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+```
+* 问题1：
+`ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)`
+
+* 问题2：
+莫名其妙的自动退出
+
+一步步测试
+```
+docker run --name mysql-1 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:5.7
+```
+登录mysql
+```
+mysql -u root -p my-secret-pw
+```
+
+```
+docker run -p 8080:3306 --name mysql-1 -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
+```
+测试远程连接需要用宿主机的IP地址，而不是容器里面的IP地址！
+```
+docker run -p 8080:3306 --name mysql-1 -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
+```
+成功映射配置
+```
+docker run -p 8080:3306 --name mysql-data -v /home/chenzhixiong/09-django/learningdjango/mysqldata/myconfig:/etc/mysql/mysql.conf.d -v /home/chenzhixiong/09-django/learningdjango/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:5.7
+```
+开启不了
+
+最终可用版
+```
+docker run -p 8080:3306 --name mysql-data -v /home/chenzhixiong/09-django/learningdjango/myconfig:/etc/mysql/mysql.conf.d -v /home/chenzhixiong/09-django/learningdjango/mysqldata:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -it mysql:5.7
+```
+说明：
+
+* -p 挂载端口
+* -v 映射目录
+* -e MYSQL_ROOT_PASSWORD=root 环境变量，官方给出的，设置初始root密码
+* 我在这里把配置文件挂到`/etc/mysql/mysql.conf.d `这个目录，其实不太对因为这个目录里的好像是默认配置文件的模板，实际应该用`/etc/mysql/my.cnf`
+    
+
+
+意外发现，被docker挂载后的文件夹会被docker改变权限，只有docker用得了，我要用 chmod a+rwx -R * 修改权限才能使用
+所以以后docker挂载的目录应设置号具体地方，不要和本地数据库共用同一目录
+
+
+
+
+
+### 使用MySQL数据库
+* 在虚拟环境中安装mysql包
+```markdown
+pip3 install mysql-python
+```
+* 在mysql中创建数据库
+
+我们在模型类中进行迁移会创建表，但不会创建数据库，所以我们要提前创建好数据库
+```markdown
+pip install mysql-python
+```
+出现异常，我到PYPI查询后发现
+>MySQL-3.23 through 5.5 and Python-2.4 through 2.7 are currently supported. Python-3.0 will be supported in a future release. PyPy is supported.
+
+问题出在还不支持python3！！
+我去MySQL官网查python的API
+```markdown
+pip install mysql-connector-python
+```
+安装成功
+
+* 在mysql中创建数据库
+```markdown
+CREATE DATABASE test2 CHARSET utf8 COLLATE utf8_general_ci;
+
+下面这句效果多一点，如果数据库不存在才创建
+CREATE DATABASE IF NOT EXISTS test2 DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+```
+* 打开settings.py文件，修改DATABASES项
+```markdown
+# test2/setting.py
+
+# 使用mysql数据库
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'test2',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '8080',  # Docker:mysql-data 默认端口3306映射到8080 
+        'OPTION': {
+            'autocommit': True,
+        }
+    }
+}
+
+```
+* 生成应用booktest
+```markdown
+cd test2
+python manage.py startapp booktest
+```
+生成应用`booktest`的时候出现异常
+
+`django.core.exceptions.ImproperlyConfigured: Error loading MySQLdb module: No module named 'MySQLdb'`
+
+由于mysql-python不支持python3，我安装的是官方的API，这里在配置setting.py时与视频是有区别的！！
+
+官方参考文档链接[Connector/Python Django Back End](https://dev.mysql.com/doc/connector-python/en/connector-python-django-backend.html)
+* 注册应用
+```markdown
+# test2/setting.py
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'booktest',
+)
+```
+### 定义模型
+* 关于模型的字段:
+
+其中一般不用`FileField`,`ImageField`,因为上传容量大的二进制文件到数据库里，导致数据库容量很大，不好维护
+
+一般做法是上传文件到服务器里，把文件路径记录下来，存到数据库，其实存储的路径就是字符串
+
+* 关于字段约束
+
+`null`:就是能不能将`null`存到数据库
+
+`blank`:表单验证范畴，就是在admin添加数据的时候，该字段能不能为空，就是做这样一个验证的作用！
+
+`default`:这个约束好像不管用
+
+* 定义模型
+```markdown
+# booktest/models.py
+
+from django.db import models
+
+# Create your models here.
+
+
+class BookInfo(models.Model):
+    btitle = models.CharField(max_length=20)
+    bpub_date = models.DateTimeField(db_column='pub_date')  # 设置admin字段名为pub_date
+    # 阅读量，顺便测试default有没有用
+    bread = models.IntegerField(default=0)
+    bcomment = models.IntegerField(null=False)  # 评论量不能为空
+    isDelete = models.BooleanField(default=False)
+
+    # 定义元信息
+    class Meta:
+        db_table = 'bookinfo'  # 定义数据表名称,默认表名为 booktest_bookinfo
+
+
+class HeroInfo(models.Model):
+    hname = models.CharField(max_length=10)
+    hgender = models.BooleanField(default=True)
+    hcontent = models.CharField(max_length=1000)
+    idDelete = models.BooleanField(default=False)
+    book = models.ForeignKey(BookInfo)
+
+```
+已经注册过了，所以下一步生成迁移，执行迁移
+```markdown
+python manage.py makemigrations
+python manage.py migrate
+```
+
+* 管理器Manager
+
+>objects：是Manager类型的对象，用于与数据库进行交互,相当于ORM;
+当定义模型类时没有指定管理器，则Django会为模型类提供一个名为objects的管理器
+
+查询BookInfo的全部对象`BookInfo.objects.all()`
+
+>支持明确指定模型类的管理器
+
+```markdown
+class BookInfo(models.Model):
+    ...
+    books = models.Manager()  # 明确指定管理器
+```
+
+当为模型类指定管理器后，django不再为模型类生成名为objects的默认管理器
+
+* 自定义管理器
+>管理器是Django的模型进行数据库的查询操作的接口，Django应用的每个模型都拥有至少一个管理器;
+
+管理器应用1-更改默认查询集：修改管理器返回的原始查询集-重写get_queryset()方法
+```markdown
+# booktest/models.py
+
+class BookInfoManager(models.Manager):
+    """自定义Manager，模型类的管理器"""
+    def get_queryset(self):
+        """重写管理器Manager的get_querset方法，返回未逻辑删除的对象"""
+        return super(BookInfoManager, self).get_queryset().filter(isDelete=False)
+
+
+class BookInfo(models.Model):
+    btitle = models.CharField(max_length=20)
+    bpub_date = models.DateTimeField(db_column='pub_date')  # 设置admin字段名为pub_date
+    # 阅读量，顺便测试default有没有用
+    bread = models.IntegerField(default=0)
+    bcomment = models.IntegerField(null=False)  # 评论量不能为空
+    isDelete = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.btitle
+
+    # 定义元信息
+    class Meta:
+        db_table = 'bookinfo'  # 定义数据表名称,默认表名为 booktest_bookinfo
+
+    book1 = models.Manager()  # 指定管理器
+    book2 = BookInfoManager()  # 自定义管理器
+```
+测试
+```markdown
+python manage.py shell
+
+>>> from booktest.models import BookInfo
+>>> BookInfo.book1.all()
+[<BookInfo: 射雕英雄传>, <BookInfo: 天龙八部>, <BookInfo: 笑傲江湖>, <BookInfo: 雪山飞狐>]
+>>> BookInfo.book2.all()
+[<BookInfo: 射雕英雄传>]
+
+```
+>以往创建一个BookInfo的对象，并保存，需要写很多行代码，有没有办法可以更加快捷的创建对象吗？
+1. `b = BookInfo(btitle, bpub_date)`,用`__init__`方法实现
+但是会出现异常，原因是父类Model已经用了`__init__`方法了
+2. 用类方法
+```markdown
+# booktest/models.py
+
+# 类方法创建对象
+@classmethod
+def create(cls, btitle, bpub_date, bread=0, bcomment=0, isDelete=False):
+    b = BookInfo()
+    b.btitle = btitle
+    b.bpub_date = bpub_date
+    b.bread = bread
+    b.bcomment = bcomment
+    b.isDelete = isDelete
+    return b
+
+python manage.py shell
+
+>>> from booktest.models import BookInfo
+>>> import datetime
+>>> b = BookInfo.create('abc',datetime.datetime(1990,1,1))
+>>> b.save()
+```
+
+管理器应用2-创建对象(官方推荐)
+```markdown
+# booktest/models.py
+
+class BookInfoManager(models.Manager):
+    """自定义Manager，模型类的管理器"""
+    def get_queryset(self):
+        """重写管理器Manager的get_querset方法，返回未逻辑删除的对象"""
+        return super(BookInfoManager, self).get_queryset().filter(isDelete=False)
+    
+    def create(cls, btitle, bpub_date, bread=0, bcomment=0, isDelete=False):
+        """创建对象"""
+        b = BookInfo()
+        b.btitle = btitle
+        b.bpub_date = bpub_date
+        b.bread = bread
+        b.bcomment = bcomment
+        b.isDelete = isDelete
+        return b
+        
+python manage.py shell
+
+>>> from booktest.models import BookInfo
+>>> import datetime
+>>> b = BookInfo.book2.create('123',datetime.datetime(2017,1,1))
+>>> b.save()
+
+```

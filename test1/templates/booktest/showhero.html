@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图书相关的英雄信息</title>
+    <style>
+        .box {
+            margin: 50px auto 0;
+            width: 50%;
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>英雄信息展示</h1>
+        <ul>
+            {%for hero in list%}
+            <li>{{hero.hname}}</li>
+            {%endfor%}
+        </ul>
+    </div>
+</body>
+</html>

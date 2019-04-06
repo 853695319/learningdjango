@@ -25,5 +25,20 @@ def index(request):
     bookList = BookInfo.objects.all()  # 取得全部图书对象
 
     # 将数据填入template
-    context = {'list': bookList}
-    return render(request, template_name='booktest/index.html', context=context)
+    book_context = {'list': bookList}
+    return render(request, template_name='booktest/index.html', context=book_context)
+
+
+def showhero(request, book_id):
+    """
+    :param request: HTTP请求
+    :param book_id: 图书的ID
+    :return: HTTP响应页面
+    """
+    # 1.要知道展示那本书
+    book = BookInfo.objects.get(pk=book_id)
+
+    # 2.该书对应的所有英雄对象集合 注意用all()方法获得可遍历[...]
+    hero_list = book.heroinfo_set.all()
+    hero_context = {'list': hero_list}
+    return render(request, 'booktest/showhero.html', hero_context)
