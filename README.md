@@ -990,3 +990,9 @@ urlpatterns = [
 </body>
 </html>
 ```
+
+## MVT-视图views
+新建项目
+```markdown
+django-admin startproject test3
+```
