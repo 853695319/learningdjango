@@ -9,7 +9,7 @@ class BookInfoManager(models.Manager):
         """重写管理器Manager的get_querset方法，返回未逻辑删除的对象"""
         return super(BookInfoManager, self).get_queryset().filter(isDelete=False)
 
-    def create(cls, btitle, bpub_date, bread=0, bcomment=0, isDelete=False):
+    def create(self, btitle, bpub_date, bread=0, bcomment=0, isDelete=False):
         """创建对象"""
         b = BookInfo()
         b.btitle = btitle
@@ -53,7 +53,6 @@ class BookInfo(models.Model):
         return b
 
 
-
 class HeroInfo(models.Model):
     hname = models.CharField(max_length=10)
     hgender = models.BooleanField(default=True)
@@ -63,3 +62,12 @@ class HeroInfo(models.Model):
 
     def __str__(self):
         return self.hname
+
+    def gender(self):
+        if self.hgender:
+            return '男'
+        else:
+            return '女'
+    gender.short_description = '性别'
+
+

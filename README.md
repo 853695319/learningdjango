@@ -359,7 +359,9 @@ class HeroInfoAdmin(admin.ModelAdmin):
     list_display = ['hname', 'gender', 'hcontent', 'hbook']
     
 admin.site.register(HeroInfo, HeroInfoAdmin)
+
 ```
+这样修改后，点击`性别`这个字段，就没有排序功能了
 
 
 
@@ -878,4 +880,113 @@ python manage.py shell
 >>> b = BookInfo.book2.create('123',datetime.datetime(2017,1,1))
 >>> b.save()
 
+```
+* admin管理站点
+注册超级管理员
+```markdown
+root
+root
+root@163.com
+```
+### 查询集
+两个特征：
+1. **惰性执行**：创建查询集不会带来任何数据库的访问，直到调用数据时，才会访问数据库
+2. 在新建的查询集中，缓存为空，首次对查询集求值时，会发生数据库查询，django会将查询的结果存在查询集的缓存中，并返回请求的结果，**接下来对查询集求值将重用缓存的结果**
+>何时查询集不会被缓存：当只对查询集的**部分**进行求值时会检查缓存，但是如果这部分不在缓存中，那么接下来查询返回的记录将不会被缓存，这意味着使用索引来限制查询集将不会填充缓存，如果这部分数据已经被缓存，则直接使用缓存中的数据
+```markdown
+query = BookInfo.objects.all()
+# 情况1
+for _ in query  # 缓存全部
+fot _ in query[11:20]  # 调用缓存
+
+# 情况2 
+for _ in query[0:10]  # 缓存子集
+for _ in query[11:20]  # 该部分不在缓存中，不缓存这部分
+```
+### 自关联
+* 建应用，并注册应用
+```markdown
+python manage.py startapp areainfo
+```
+* 建模型,注册模型，生成迁移，执行迁移
+```markdown
+# booktest/models.py
+
+class AreaInfo(models.Model):
+    atitle = models.CharField(max_length=20)
+    
+    # 自关联， 可以写入null，admin表单可以为空，注意'self'!!
+    aparent = models.ForeignKey('self', null=True, blank=True)
+
+    class Meta:
+        db_table = 'areas'  # 表名：areas
+
+    def __str__(self):
+        return self.atitle
+```
+* 管理站点
+```markdown
+# areainfo/admin.py
+
+class AreaInfoAdmin(admin.ModelAdmin):
+    list_display = ['id', 'atitle', 'aparent']
+
+
+admin.site.register(AreaInfo, AreaInfoAdmin)
+```
+* 视图
+```markdown
+# areainfo/views.py
+
+from .models import AreaInfo
+
+
+def area(request):
+    _area = AreaInfo.objects.get(pk=130100)
+    return render(request, 'areainfo/area.html', {'area': _area})
+```
+* URLs
+```markdown
+# test2/urls.py
+
+from booktest import views
+from areainfo.views import area
+
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', views.index, name='index'),
+    url(r'^area/$', area, name='area'),
+]
+```
+* templates
+```markdown
+# templates/areainfo/area.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>地区</title>
+</head>
+<body>
+<div style="background: red;">
+    当前地区：{{area.atitle}}
+
+</div>
+<br>
+<div style="background: blue;">
+    上级地区：{{area.aparent.atitle}}
+
+</div>
+<br>
+<div style="background: green;">
+    下级地区：
+    <ul style="list-style:none;">
+        {%for a in area.areainfo_set.all%}
+        <li>{{a.atitle}}</li>
+        {%endfor%}
+    </ul>
+
+</div>
+</body>
+</html>
 ```

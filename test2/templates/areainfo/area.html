@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>地区</title>
+</head>
+<body>
+<div style="background: red;">
+    当前地区：{{area.atitle}}
+
+</div>
+<br>
+<div style="background: blue;">
+    上级地区：{{area.aparent.atitle}}
+
+</div>
+<br>
+<div style="background: green;">
+    下级地区：
+    <ul style="list-style:none;">
+        {%for a in area.areainfo_set.all%}
+        <li>{{a.atitle}}</li>
+        {%endfor%}
+    </ul>
+
+</div>
+</body>
+</html>

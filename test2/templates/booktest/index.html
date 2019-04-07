@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box {
+            margin: 20px auto 0;
+            width: 50%;
+            background: gray;
+        }
+        .box ul {
+            list-style:None;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h4>关联</h4>
+        <ul>
+            {%for book in list%}
+            <li>{{book.btitle}}
+                <span>Read:[{{book.bread}}] &lt; Comment:[{{book.bcomment}}]</span>
+            </li>
+            {%endfor%}
+        </ul>
+    </div>
+
+    <div style="display:none;">
+        <h4>聚合</h4>
+        <p>
+            {{list.bpub_date__max}}
+        </p>
+    </div>
+</body>
+</html>
