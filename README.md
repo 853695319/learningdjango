@@ -996,3 +996,40 @@ urlpatterns = [
 ```markdown
 django-admin startproject test3
 ```
+新建app
+```markdown
+python manage.py startapp booktest
+```
+### 配置URLconf
+```markdown
+# test3/urls.py
+
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^booktest/', include('booktest.urls'))
+]
+
+
+# booktest/urls.py
+
+from django.conf.urls import url
+from . import views
+
+urlpatterns = {
+    url(r'^$', views.index, name='index')
+}
+
+
+# booktest/views.py
+
+from django.http import HttpResponse
+
+
+def index(request):
+    return HttpResponse("hello world")
+
+# 测试
+python manage.py runserver
+http://127.0.0.1:8000/booktest/
+
+```
