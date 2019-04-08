@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+    <title>Base</title>
+    {% endblock title%}
+
+    {% block head %}
+    {% endblock head%}
+
+</head>
+<body>
+    <div>
+        logo
+    </div>
+    <div>
+        {% block content1 %}
+        block-content1
+        {% endblock %}
+    </div>
+    <div>
+        {{ uname }} in base.html
+        contact
+    </div>
+</body>
+</html>
