@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+</head>
+<body>
+<!--    <div>-->
+<!--        {{ hero.hname }}<br>-->
+<!--        {{ hero.showskill }}<br>-->
+<!--    </div>-->
+<div>
+    <h4>URL反向解析</h4>
+    <a href="11/">显示id</a>
+</div>
+<hr>
+
+<div>
+    <ul>
+        {% for hero in herolist %}
+        <!--    forloop.counter 返回当前循环是第几次    -->
+        <li>{{  forloop.counter  }}:{{ hero.hname }}</li>
+        {% empty %}
+        <li>啥也没有</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div>
+    <h4>奇数行红色，偶数行蓝色</h4>
+    {% for hero in herolist %}
+
+    {% if forloop.counter|divisibleby:2  %}
+    <li style="color:blue;">{{  forloop.counter  }}:{{ hero.hname }}</li>
+    {% else %}
+    <li style="color:red;">{{  forloop.counter  }}:{{ hero.hname }}</li>
+    {% endif %}
+
+    {% endfor %}
+</div>
+
+</body>
+</html>

@@ -1231,3 +1231,65 @@ python manage.py startapp booktest
 如果变量不存在， 模版系统将插入'' (空字符串)
 
 在模板中调用方法时不能传递参数，因为不能写括号
+
+### django 加减乘除，求余
+```markdown
+django模板只提供了加法的filter，没有提供专门的乘法和除法运算；
+django提供了widthratio的tag用来计算比率，可以变相用于乘法和除法的计算。
+加法
+{{value|add:10}}
+note:value=5,则结果返回15
+
+减法
+{{value|add:-10}}
+note:value=5,则结果返回-5，加一个负数就是减法了
+
+乘法
+{% widthratio 5 1 100%}
+note:等同于：(5 / 1) * 100 ，结果返回500，withratio需要三个参数，它会使用参数1/参数2*参数3的方式进行运算，进行乘法运算，使「参数2」=1
+
+除法
+{% widthratio 5 100 1%}
+note:等同于：(5 / 100) * 1,则结果返回0.05,和乘法一样，使「参数3」= 1就是除法了。
+
+求余 
+{% if forloop.counter|divisibleby:"4" %}
+整出4的数
+{% if forloop.counter|divisibleby:"2" %} --> 整除2的数
+```
+
+### URL反向解析
+一般正则在在`$`前加斜杠`/`，不在`^`后加`/`,eg: `r"^admin/$"`
+1. 硬编码链接
+```markdown
+# test4/urls.py
+
+url(r'^', include('booktest.urls', namespace='booktest')),
+
+# booktest/view.py
+
+def show(request, id):
+    context = {'id':id}
+    return render(request, 'booktest/show.html', context)
+
+# booktest/urls.py
+
+url(r'^(\d+)/$', views.show, name='show'),
+# http://127.0.0.1:8000/1233445667/
+
+# booktest/index.html
+
+<div>
+    <h4>URL反向解析</h4>
+    <a href="11/">显示id</a>
+</div>
+
+# booktest/show.html
+
+<div>
+    id: {{ id }}
+</div>
+
+```
+
+2.URL反向解析
