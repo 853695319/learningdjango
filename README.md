@@ -1207,7 +1207,7 @@ Out[39]: b'd80677a4b80e1d82c516edcedeb41fc87b5f1a1e:{"_session_expiry":0,"userna
 
 
 ## MVT-模板Templates
-1. 创建项目
+创建项目,配置数据库，模板URLs
 ```markdown
 django-admin startproject test4
 python manage.py startapp booktest
