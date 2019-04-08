@@ -1033,3 +1033,170 @@ python manage.py runserver
 http://127.0.0.1:8000/booktest/
 
 ```
+### URL的反向解析-重定向
+
+如果在视图、模板中使用硬编码的链接，在urlconf发生改变时，维护是一件非常麻烦的事情
+
+解决：在做链接时，通过指向urlconf的名称，动态生成链接地址
+
+视图：使用django.core.urlresolvers.reverse()函数
+
+模板：使用url模板标签
+
+举个例子：
+
+在index.html模板中，超链接是硬编码的，此时的请求地址为“127.0.0.1/1/”
+
+`<a href="{{book.id}}">`
+
+看如下情况：将urlconf中详细页改为如下，链接就找不到了
+
+`url(r'^book/([0-9]+)/$', views.detail),`
+
+原地址：127.0.0.1/1/
+
+此时的请求地址应该为“127.0.0.1/book/1/”
+
+问题总结：如果在模板中地址硬编码，将来urlconf修改后，地址将失效
+
+解决：使用命名的url设置超链接
+
+修改test1/urls.py文件，**在include中设置namespace**
+
+`url(r'^admin/', include(admin.site.urls, namespace='booktest')),`
+
+修改booktest/urls.py文件，**设置name**
+
+`url(r'^book/([0-9]+)/$', views.detail, name="detail"),`
+
+修改index.html模板中的链接
+
+`<a href="{%url 'booktest:detail' book.id%}">`
+
+### 404视图
+>如果在settings中DEBUG设置为True，那么将永远不会调用404视图，而是显示URLconf 并带有一些调试信息
+```markdown
+# test3/setting.py
+
+DEBUG = False
+ALLOWED_HOSTS = ['*']  # 谁都可以请求该主机
+```
+
+### Request对象
+>GET：一个类似于字典的对象，包含get请求方式的所有参数
+>
+>POST：一个类似于字典的对象，包含post请求方式的所有参数
+
+>类似于字典的对象:QueryDict对象
+>
+>与python字典不同，QueryDict类型的对象用来处理同一个键带有多个值的情况
+
+* 关于URL
+
+```markdown
+www.itcast.cn/ 
+├── b.html <a href="/b.html"></a> 多了斜杠'/'表示到根目录找 b.html
+└── c
+    └── a.html <a href="www.itcast.cn/c/a.html">当前页</a>
+    └── b.html <a href="b.html"></a> 在当前目录下找 b.html
+
+```
+* POST测试时遇到 403
+>Forbidden (403)
+>
+>CSRF verification failed. Request aborted.
+
+解决办法：
+注释`setting.py`中 MIDDLEWARE_CLASSES的'django.middleware.csrf.CsrfViewMiddleware',
+
+* session 测试遇到OperationalError
+
+>OperationalError at /booktest/sessionTest2_handle/
+>
+>no such table: django_session
+
+原因是，数据库没有相应的表结构，为什么没有相应的表结构，是因为我们没有执行过**迁移**
+
+解决：改sqllite为之前用过的mysql数据库，这里有表结构，因为之前项目执行过迁移
+
+表名：django_session
+
+django_session.session_data base64加密的，特征是最后有1个或2个等号，可以解开来看看
+```markdown
+In [30]: import base64
+
+In [31]: s = 'ZmE1MGY5MzljMTA4NjgzZjRmNzIwNTg5ZDA3NWQ5MDcyNjI0MzhjOTp7InVzZXJuYW
+    ...: 1lIjoicHl0aG9uIiwiX3Nlc3Npb25fZXhwaXJ5IjowfQ=='
+
+In [32]: result = base64.b64decode(s)
+
+In [33]: result
+Out[33]: b'fa50f939c108683f4f720589d075d907262438c9:{"username":"python","_session_expiry":0}'
+```
+* 使用Redis缓存session
+```markdown
+pip install django-redis-sessions
+
+# test3/setting.py
+
+# 使用Redis缓存session
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 0,
+    'password': '',
+    'prefix': 'session',
+    'socket_timeout': 1
+}
+
+# 启动redis
+redis-server /etc/redis.conf
+# 确认是否启动
+ps -ajx | grep redis
+ 1733  42083  42083  42083 ?            -1 Ssl   1000   0:00 redis-server 127.0.0.1:6379
+
+# 启动客户端
+redis-cli
+
+chenzhixiong@ubuntu:~$ redis-cli
+127.0.0.1:6379> KEYS *
+1) "hehe"
+2) "456"
+3) "123"
+4) "dig"
+5) "test"
+6) "kuku"
+7) "name"
+8) "789"
+9) "lalala"
+
+# 启用session登录后
+127.0.0.1:6379> KEYS *
+ 1) "hehe"
+ 2) "456"
+ 3) "123"
+ 4) "session:0lsjbiks4dzc05topkmlivvg3feqm4qs"
+ 5) "dig"
+ 6) "test"
+ 7) "kuku"
+ 8) "name"
+ 9) "789"
+10) "lalala"
+
+# 取session
+127.0.0.1:6379> GET "session:0lsjbiks4dzc05topkmlivvg3feqm4qs"
+"ZmE1MGY5MzljMTA4NjgzZjRmNzIwNTg5ZDA3NWQ5MDcyNjI0MzhjOTp7InVzZXJuYW1lIjoicHl0aG9uIiwiX3Nlc3Npb25fZXhwaXJ5IjowfQ=="
+
+# base64解码
+In [37]: s = "ZDgwNjc3YTRiODBlMWQ4MmM1MTZlZGNlZGViNDFmYzg3YjVmMWExZTp7Il9zZXNzaW9uX2V4cGlyeSI6MC
+    ...: widXNlcm5hbWUiOiJzZXNzaW9uIGluIHJlZGlzIn0="
+    ...: 
+
+In [38]: result = base64.b64decode(s)
+
+In [39]: result
+Out[39]: b'd80677a4b80e1d82c516edcedeb41fc87b5f1a1e:{"_session_expiry":0,"username":"session in redis"}'
+
+
+```
