@@ -11,7 +11,10 @@
 <!--    </div>-->
 <div>
     <h4>URL反向解析</h4>
-    <a href="11/">显示id</a>
+<!--    <a href="11/">显示id</a>-->
+    {% url 'booktest:show' '123' as show_url %}
+    <a href="{{ show_url}}">显示id</a>
+<!--    根据url标签的规则，到相应的命名空间取规则 r'^booktets/' + r'^(/d+)/$' -->
 </div>
 <hr>
 

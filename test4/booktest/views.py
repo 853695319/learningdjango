@@ -12,6 +12,6 @@ def index(request):
     return render(request, 'booktest/index.html', context)
 
 
-def show(request, id):
-    context = {'id':id}
+def show(request, id_):
+    context = {'id': id_}
     return render(request, 'booktest/show.html', context)

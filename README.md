@@ -1293,3 +1293,90 @@ url(r'^(\d+)/$', views.show, name='show'),
 ```
 
 2.URL反向解析
+
+>正常：根据`booktest/123`-->URL
+>
+>反向：根据URL --> `booktest/123`
+```markdown
+# test4/urls.py
+
+url(r'^booktest/', include('booktest.urls', namespace='booktest')),
+
+# booktest/index.html
+
+{% url 'booktest:show' '123' as show_url %}
+<a href="{{ show_url}}">显示id</a>
+```
+
+>异常：django 报错’ set’ object is not reversible
+原因是
+```markdown
+# test4/urls.py
+
+urlpatterns = {}  # 这里写错了！ 不应该是 set类型
+urlpatterns = []  # 这样才对！！
+
+```
+3.原理详解：反查带命名空间的URL
+
+当解析一个带命名空间的URL（例如'polls:index'）时，Django 将切分名称为多个部分，然后按下面的步骤查找：
+
+* 首先，Django 查找匹配的**应用命名空间**(在这个例子中为'polls'）。这将得到该**应用实例的一个列表**。
+如果有一个当前应用被定义，Django 将查找并返回那个实例的URL 解析器。当前应用可以通过请求上的一个属性指定。预期会具有多个部署的应用应该设置正在处理的request 的current_app 属性。
+
+>Changed in Django 1.8: 
+>
+>在以前版本的Django 中，你必须在用于渲染模板的每个Context 或 RequestContext上设置current_app 属性。
+
+* 当前应用还可以通过reverse() 函数的一个参数手工设定。
+* 如果没有当前应用。Django 将查找一个默认的应用实例。默认的应用实例是实例命名空间 与应用命名空间 一致的那个实例（在这个例子中，polls 的一个叫做'polls' 的实例）。
+* **如果没有默认的应用实例，Django 将挑选该应用最后部署的实例，不管实例的名称是什么。**
+* 如果提供的命名空间与第1步中的应用命名空间 不匹配，Django 将尝试直接将此命名空间作为一个实例命名空间查找。
+* 如果有嵌套的命名空间，将为命名空间的每个部分重复调用这些步骤直至剩下视图的名称还未解析。然后该视图的名称将被解析到找到的这个命名空间中的一个URL。
+例子¶
+
+为了演示解析的策略，考虑教程中polls 应用的两个实例：'author-polls' 和'publisher-polls'。假设我们已经增强了该应用，在创建和显示投票时考虑了实例命名空间。
+```
+# urls.py
+from django.conf.urls import include, url
+
+urlpatterns = [
+    url(r'^author-polls/', include('polls.urls', namespace='author-polls', app_name='polls')),
+    url(r'^publisher-polls/', include('polls.urls', namespace='publisher-polls', app_name='polls')),
+]
+
+# polls/urls.py
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^(?P<pk>\d+)/$', views.DetailView.as_view(), name='detail'),
+    ...
+]
+```
+根据以上设置，可以使用下面的查询：
+
+如果其中一个实例是当前实例 —— 如果我们正在渲染'author-polls' 实例的detail 页面 —— 'polls:index' 将解析成'author-polls' 实例的主页面；例如下面两个都将解析成"/author-polls/"。
+
+在基于类的视图的方法中：
+
+reverse('polls:index', current_app=self.request.resolver_match.namespace)
+
+和在模板中：
+
+{% url 'polls:index' %}
+
+注意，在模板中的反查需要添加request 的current_app 属性，像这样：
+```
+def render_to_response(self, context, **response_kwargs):
+    self.request.current_app = self.request.resolver_match.namespace
+    return super(DetailView, self).render_to_response(context, **response_kwargs)
+```
+如果没有当前实例 —— 如果我们在站点的其它地方渲染一个页面 —— 'polls:index' 将解析到最后注册的polls的一个实例。因为没有默认的实例（命名空间为'polls'的实例），将使用注册的polls 的最后一个实例。它将是'publisher-polls'，因为它是在urlpatterns中最后一个声明的。
+
+>**'author-polls:index' 将永远解析到 'author-polls' 实例的主页（'publisher-polls' 类似）。**
+>
+> 所以用实例命名空间更准确
+
+如果还有一个默认的实例 —— 例如，一个名为'polls' 的实例 —— 上面例子中唯一的变化是当没有当前实例的情况（上述第二种情况）。在这种情况下 'polls:index' 将解析到默认实例而不是urlpatterns 中最后声明的实例的主页。
