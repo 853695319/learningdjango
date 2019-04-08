@@ -1200,3 +1200,34 @@ Out[39]: b'd80677a4b80e1d82c516edcedeb41fc87b5f1a1e:{"_session_expiry":0,"userna
 
 
 ```
+
+
+
+
+
+
+## MVT-模板Templates
+1. 创建项目
+```markdown
+django-admin startproject test4
+python manage.py startapp booktest
+```
+###变量
+
+语法：`{{ variable }}`
+
+当模版引擎遇到一个变量，将计算这个变量，然后将结果输出
+
+变量名必须由字母、数字、下划线（不能以下划线开头）和点组成
+
+当模版引擎遇到点(".") eg:{{ book.id }}，会按照下列顺序查询：
+
+* 字典查询，例如：book['id'] ,所以不能带有括号，有括号就报错！
+
+* 属性或方法查询，例如：book.id
+
+* 数字索引查询，例如：book[id] 列表或元组
+
+如果变量不存在， 模版系统将插入'' (空字符串)
+
+在模板中调用方法时不能传递参数，因为不能写括号
