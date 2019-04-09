@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>验证码Captcha</title>
+</head>
+<body>
+    <div>
+        <h4>验证码</h4>
+        <img src="{% url 'booktest:generateCaptcha' %}" alt="验证码">
+
+        <form action="{% url 'booktest:verifyCode' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="recv_code" placeholder="注意区分大小写"><br>
+            <input type="submit" value="提交验证码"><span>  {{ statu }}</span>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>htmlTest</title>
+</head>
+<body>
+    django默认转义： {{ html }}<br>
+    <hr>
+    过滤器关闭转义： {{ html|safe }}
+    <hr>
+    标签关闭转义:
+    {% autoescape off %}
+    {{ html }}
+    {% endautoescape %}
+    <hr>
+    字面值：{{ t2|default:'<b>default</b>' }}
+    <hr>
+    手动转义：{{ t2|default:'&lt;b&gt;default&lt;/b&gt;' }}
+</body>
+</html>

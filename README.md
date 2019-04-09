@@ -1207,6 +1207,8 @@ Out[39]: b'd80677a4b80e1d82c516edcedeb41fc87b5f1a1e:{"_session_expiry":0,"userna
 
 
 ## MVT-模板Templates
+**写模板语言时，不要随便加空格！！**
+
 创建项目,配置数据库，模板URLs
 ```markdown
 django-admin startproject test4
@@ -1380,3 +1382,131 @@ def render_to_response(self, context, **response_kwargs):
 > 所以用实例命名空间更准确
 
 如果还有一个默认的实例 —— 例如，一个名为'polls' 的实例 —— 上面例子中唯一的变化是当没有当前实例的情况（上述第二种情况）。在这种情况下 'polls:index' 将解析到默认实例而不是urlpatterns 中最后声明的实例的主页。
+
+### html 转义
+
+>html.escape(s, quote=True)
+>
+>将字符串 s 中的字符``&`` 、 < 和 > 转换为安全的HTML序列。 如果需要在 HTML 中显示可能包含此类字符的文本，请使用此选项。 如果可选的标志 quote 为真值，则字符 (") 和 (') 也被转换；这有助于包含在由引号分隔的 HTML 属性中，如 <a href="...">。
+>
+>3.2 新版功能.
+>
+>html.unescape(s)
+>
+>将字符串 s 中的所有命名和数字字符引用 (例如 &gt;, &#62;, &#x3e;) 转换为相应的Unicode字符。 此函数使用HTML 5标准为有效和无效字符引用定义的规则，以及 HTML 5 命名字符引用列表。
+
+默认情况下，Django 中的每个模板会自动转义每个变量的输出。 明确地说，下面五个字符被转义：
+
+    < 会转换为&lt;
+    > 会转换为&gt;
+    '（单引号）转换为&#39;
+    " (双引号)会转换为 &quot;
+    & 会转换为 &amp;
+
+
+* python3 实现转义和反转义
+```
+In [78]: import html
+
+In [79]: s='<b>default</b>'
+
+In [80]: result = html.escape(s)
+
+In [81]: print(result)
+&lt;b&gt;default&lt;/b&gt;
+
+In [82]: s = html.unescape(result)
+
+In [83]: print(s)
+<b>default</b>
+```
+
+* django 默认开启转义,是出于安全考虑，防止传入代码直接执行
+```markdown
+> 转义 &gt;
+
+s = '<h1>123</h1>'
+{{ s|escape }} -> &lt;h1&gt;123&lt;/h1&gt;
+```
+* 关闭转义
+```markdown
+s = '<h1>123</h1>'
+{{ s|safe }} -> 123
+```
+* 字面值默认不转义
+像我们之前提到的那样，过滤器参数可以是字符串：
+```markdown
+{{ data|default:"This is a string literal." }}
+```
+所有字面值字符串在插入模板时都 不会带有任何自动转义 -- 它们的行为类似于通过 safe过滤器传递。 背后的原因是，模板作者可以控制字符串字面值的内容，所以它们可以确保在模板编写时文本经过正确转义。
+
+也即是说你应该这样编写
+```markdown
+{{ data|default:"3 &lt; 2" }}
+```
+
+…而不是：
+```markdown
+{{ data|default:"3 < 2" }}  {# Bad! Don't do this. #}
+```
+
+这不会影响来源于变量自身的数据。 变量的内容在必要时仍然会自动转义，因为它们不受模板作者的控制。
+
+* 总结
+
+从视图传入模板的数据默认转义，直接在HTML定义的数据不自动转义
+
+### CSRF
+只有POST请求时，才关系到CSRF
+```markdown
+# booktest/views.py
+
+# csrf
+def csrf1(request):
+    return render(request, 'booktest/csrf1.html')
+
+
+def csrf2(request):
+    uname = request.POST['uname']
+    return HttpResponse(uname)
+
+配置booktest/urls.py
+
+
+
+# 用本地IP地址开启服务
+python manage.py runserver 192.168.0.107:8000
+
+# 换一台机器访问
+192.168.0.107：8000/csrf1/
+提交出现Forbidden
+
+# 到setting.py注释csrf
+
+MIDDLEWARE_CLASSES = (
+    # 'django.middleware.csrf.CsrfViewMiddleware',
+)
+
+# 重启服务，再次提交，成功
+在另一台电脑把网页源代码复制下来，设置好<form>的表单提交地址，就可以本地提交信息成功！
+这样别有用心的人就很容易搞你的网站了
+
+# 所以不能注释setting的csrf
+# 但问题是，我自己用本地IP地址也无法访问阿
+# 解决方法：加 csrf保护标签
+
+<form action="{% url 'booktest:csrf2' %}" method="post">
+    {% csrf_token %}
+    <input type="text" name="uname">
+    <input type="submit" value="提交">
+</form>
+
+```
+### 验证码
+`{% csrf_token %}`实际还不够强，人家把网页复制过去还是能用
+
+为了防止暴力请求，用验证码
+* 安装Pillow
+
+[Pillow](https://pillow.readthedocs.io/en/latest/index.html)
+
