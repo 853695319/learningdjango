@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from booktest import views
-from areainfo.views import area
+from areainfo.views import *
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='index'),
     url(r'^area/$', area, name='area'),
+    url(r'^ajax/$', ajax, name='ajax'),
+    url(r'^ajax/(\d+)/$', ajax_get, name='ajaxget'),
 ]

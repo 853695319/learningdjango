@@ -1,0 +1,43 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>地区</title>
+    <script src="{% static 'areainfo/jquery.min.js' %}"></script>
+    <script>
+        $(function () {
+            // 测试js文件加载
+            // console.log('hi');
+
+            $pro = $('#pro')
+
+            // 查询省信息，获得JSON格式的数据 data={'data':[]}
+            $.get('/ajax/0/', function(data) {
+
+                // 遍历JSON
+                $.each(data.data, function (index, item) {
+
+                    // 文档节点编辑 item=[id, title]
+                    $pro.append(
+                        '<option value="' + item[0] + '">' + item[1] + '</option>'
+                    );
+
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div>
+    <select name="pro" id="pro">
+        <option value="">请选择省</option>
+    </select>
+    <select name="city" id="city">
+        <option value="">请选择市</option>
+    </select>
+    <select name="dis" id="dis">
+        <option value="">请选择区</option>
+    </select>
+</div>
+</body>
+</html>

@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+
+class UserInfo(models.Model):
+    uname = models.CharField(max_length=10)
+    upwd = models.CharField(max_length=40)
+    idDelete = models.BooleanField(default=False)
+
+

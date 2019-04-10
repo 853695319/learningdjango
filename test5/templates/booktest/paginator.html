@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paginator</title>
+</head>
+<body>
+<ul>
+    {% for user in page %}
+    <li>{{ user.uname }}</li>
+    {% endfor %}
+</ul>
+<ul style="list-style:none;">
+    {% for index in page.paginator.page_range %}
+        <!--    当前页不可点击    -->
+        {% if index == page.number %}
+            <li style="float:left;">[ {{ index }} ]</li>
+        {% else %}
+            <li style="float:left">
+                <a href="/paginator/{{ index }}" style="text-decoration:none;">[ {{ index }} ]</a>
+            </li>
+        {% endif %}
+
+    {% endfor %}
+</ul>
+</body>
+</html>

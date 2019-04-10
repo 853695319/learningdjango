@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import os
 from django.conf import settings
+from .models import *
+from django.core.paginator import *
 
 
 def index(request):
@@ -29,3 +31,23 @@ def upload_handle(request):
     return HttpResponse(
         '<img src="/static/media/{}" alt="pic" style="width:30%">上传成功'.format(pic1.name)
     )
+
+
+# 分页
+def userlist(request, page_index):
+
+    # 获取数据
+    list = UserInfo.objects.all()
+
+    # 数据分页，每页5个
+    paginator = Paginator(list, 5)
+
+    # 页码
+    if not page_index:
+        page_index = '1'
+
+    page = paginator.page(int(page_index))
+
+    context = {'page': page}
+    return render(request, 'booktest/paginator.html', context)
+

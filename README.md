@@ -578,6 +578,13 @@ models.py定义的数据库只适用于**关系型数据库**，像Mongodb不适
 # MVT框架
 对MVT的三大块进行学习
 ## MVT-模型models
+写在前面的话：
+
+如果后续发现要该模型类，后续改了时迁移不过去的，会报错
+
+解决办法，改模型类，生成迁移，但不执行迁移，自己手动到数据库改表结构
+
+
 ```markdown
 django-admin startproject test2
 ```
@@ -1520,6 +1527,7 @@ STATIC_URL的作用，可以隐藏实际文件路径
 # setting.py
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
+    # 注意写法！！ 不是 /static/ 
     os.path.join(BASE_DIR, 'static'),
 ]
 
