@@ -25,4 +25,7 @@ urlpatterns = [
     url(r'^captcha/$', views.generateCaptcha, name='generateCaptcha'),
     url(r'^showcaptcha/$', views.showcaptcha, name='showcpatcha'),
     url(r'^verifyCode/$', views.verifyCode, name='verifyCode'),
+
+    # django-simple-captcha
+    url(r'^testcaptcha/$', views.get_captcha, name='get_captcha'),
 ]

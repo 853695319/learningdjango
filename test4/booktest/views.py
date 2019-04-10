@@ -128,3 +128,29 @@ def verifyCode(request):
         return HttpResponse('Successful')
     else:
         return render(request, 'booktest/showcaptcha.html', {'statu': 'Try again'})
+
+
+def get_captcha(request):
+    """
+    利用django-simple-captcha库生成验证码
+    http://127.0.0.1:8000/testcaptcha/
+    """
+    from .forms import CaptchaTestForm
+    # 如果这是一个POST请求,我们就需要处理表单数据
+    if request.method == 'POST':
+        # 创建一个表单实例,并且使用表单数据填充request请求:
+        form = CaptchaTestForm(request.POST)
+        # 检查数据有效性:
+        # Validate the form:
+        # the captcha field will **automatically** check the input!!
+        # 不区分大小写
+        if form.is_valid():
+            your_name = form.cleaned_data['your_name']
+            # return redirect('/thanks/')
+            return HttpResponse('Hello %s' % your_name)
+
+    # 如果是GET(第一次访问页面时)或者其它请求方法，我们将创建一个空的表单。
+    else:
+        form = CaptchaTestForm()
+
+    return render(request, 'captcha/testcaptcha.html', {'form': form})
