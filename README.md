@@ -1510,3 +1510,35 @@ MIDDLEWARE_CLASSES = (
 
 [Pillow](https://pillow.readthedocs.io/en/latest/index.html)
 
+
+## Django-高级
+### 静态文件
+STATIC_URL的作用，可以隐藏实际文件路径
+```
+# setting.py
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# index.html
+<img src="/static/booktest/test.jpg" alt="图片" style="width: 100%;">
+根据src可以看出图片文件加载路径
+```
+更改STATIC_URL,还能找到图片吗？
+```
+# setting.py
+STATIC_URL = '/abc/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# index.html
+<img src="/abc/booktest/test.jpg" alt="图片" style="width: 100%;">
+```
+硬编码地址匹配规则：
+* 先匹配逻辑路径 STATIC_URL
+* 在匹配物理地址 STATICFILES_DIRS
+
+动态解析：static模板标签动态解析URL
+
