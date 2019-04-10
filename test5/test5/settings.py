@@ -41,7 +41,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'booktest.MyException.MyException',  # my_appName.moduleName.className
+    # 'booktest.MyException.MyException',  # my_appName.moduleName.className
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -121,3 +121,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+# 上传文件
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media/')
