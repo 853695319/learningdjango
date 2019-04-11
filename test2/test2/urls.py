@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^area/$', area, name='area'),
     url(r'^ajax/$', ajax, name='ajax'),
-    url(r'^ajax/(\d+)/$', ajax_get, name='ajaxget'),
+    url(r'^area-pro/$', ajax_get_pro, name='ajaxgetpro'),
+    url(r'^area-city-(\d+)/$', ajax_get_city, name='ajaxgetcity'),
 ]
