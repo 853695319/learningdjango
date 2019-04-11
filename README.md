@@ -1552,3 +1552,72 @@ STATICFILES_DIRS = [
 
 动态解析：static模板标签动态解析URL
 
+### 第三方富文本编辑器
+#### django-tinymce
+
+我到pypi检索后发现，不支持py3.6，最高支持到py3.5,我尝试使用，但出现异常
+
+    TypeError at /admin/mytinymce/mymodel/add/
+
+    build_attrs() takes from 1 to 2 positional arguments but 3 were given
+
+#### django-ckeditor
+
+到网上找到另一个比较知名的第三方富文本编辑器
+
+其中有一个要点，管理`ckeditor`的相关静态文件
+到`/django_py3.6/lib/python3.6/site-packages/ckeditor/static/ckeditor`把静态文件复制到项目文件夹`static/ckeitor`
+
+admin后端
+```
+# 安装
+
+pip install django-ckeditor
+
+# setting.py
+
+Add ckeditor to your INSTALLED_APPS setting
+
+# myapp/models.py
+
+from django.db import models
+from ckeditor.fields import RichTextField
+
+
+class Post(models.Model):
+    content = RichTextField()
+
+# myapp/admin.py
+
+from django.contrib import admin
+from .models import *
+
+
+admin.site.register(Post)
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+
+it work!
+```
+
+前端
+```text
+<form>
+    {{ myform.media }}
+    {{ myform.as_p }}
+    <input type="submit"/>
+</form>
+
+or
+
+or you can load the media manually as it is done in the demo app:
+
+{% load static %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+
+
+```
