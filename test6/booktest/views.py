@@ -47,3 +47,7 @@ def cache1(request):
     # 清空redis缓存
     cache.clear()
     return HttpResponse('cache clear')
+
+
+def mysearch(request):
+    return render(request, 'booktest/mysearch.html')

@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^myeditor/$', views.myeditor),
     url(r'^cache1/$', views.cache1),
+    url(r'^search/', include('haystack.urls')),
+    url(r'^mysearch/$', views.mysearch),
 ]

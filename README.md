@@ -57,6 +57,8 @@ django.get_version()
 
 
 ## Django-建立应用booktest 模型models 测试
+
+
 * 创建项目
 
 `django-admin startproject test1`
@@ -126,7 +128,10 @@ b.save()
 """
 
 ```
+
+>如果定义了__unicode__()方法但是没有定义__str__()方法，Django会自动提供一个__str__()方法调用__unicode__()方法，然后把结果转换为UTF-8编码的字符串对象。在实际开发中，建议：只定义__unicode__()方法，需要的话让Django来处理字符串对象的转换。
 定义模型类后，可以到 test1项目文件夹下进行测试
+
 ```
 python manage.py runserver 8080
 ```
@@ -1621,3 +1626,54 @@ or you can load the media manually as it is done in the demo app:
 
 
 ```
+
+
+
+### 全文搜索
+#### 异常1
+
+* 我按教程走到  **9.生成索引** 的步骤时出现异常
+>django.core.exceptions.ImproperlyConfigured: Passing a 3-tuple to include() is not supported. Pass a 2-tuple containing the list of patterns and app_name, and provide the namespace argument to include() instead.
+
+起初我就很纳闷 `urls.py` 的设置应该时没有异常的，但是却说我传递了过多的参数
+
+我重开一个项目 test7 重新按 ``django-haystack`` 官方文档走一遍时，在我配置 `urls.py` 时发现异常点
+
+```text
+
+# The `urlpatterns` list routes URLs to views. For more information please see:
+#     https://docs.djangoproject.com/en/2.2/topics/http/urls/
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path(r'^search/', include('haystack.urls')),
+]
+```
+我的django莫名其妙地升级到 `django 2.2` , 当我重新安装 `pip install django==1.11` 时，发现我安装的
+`django-hatstack 2.8.1` 需要 `django 2.2`时，我就知道问题处在 `django` 的版本上了
+
+* 解决办法：
+
+去 `django-haystakc` Github 网页上查询 `changelog` 版本变更记录，决定使用 `v2.7.0`
+
+test7 superuser: root qew96898
+
+#### 全文检索效果对比
+* with jieba
+
+在test6，用对版本后根据教程就能走下去了
+
+异常二：有些结果搜索不到，因为中文分词的词库不好
+
+尝试一些一定有的词语，如：中国，美国，英国就可以
+
+这个中文分词用着很一般，我输入 “国” ，都不能搜索到 中国，美国，英国
+
+好像全文检索一定要输入一个完整的词，比如 hello world，用hello，world可以搜索到，但是用单个字母就没反应
+
+* without jieba
+
+在test7，我没有安jango-haystack+jieba装`jieba`,也可以搜索中文，但是结果更加糟糕，好像只能匹配开头的‘中国’
