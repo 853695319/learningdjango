@@ -1677,3 +1677,200 @@ test7 superuser: root qew96898
 * without jieba
 
 在test7，我没有安jango-haystack+jieba装`jieba`,也可以搜索中文，但是结果更加糟糕，好像只能匹配开头的‘中国’
+
+### celery
+* 本地环境
+```text
+pytho 3.6
+django==1.11
+```
+* 搭建开发环境
+```text
+# 对 Redis 的支持需要额外的依赖。你可以用 celery[redis] 捆绑 同时安装 Celery 和这些依赖：
+
+pip install -U celery[redis]
+
+# reids（与python接口API） 版本过高将导致 AttributeError: 'str' object has no attribute 'items' django
+
+pip install redis==2.10.6
+
+# django-celery 库基于 Django ORM和缓存框架实现了结果存储后端
+
+pip install django-celery==3.2.2 
+```
+* 建项目
+```text
+django-admin startproject myproject
+cd myproject
+python manage.py startapp demoapp
+```
+
+* Celery 配置
+```text
+# setting.py
+
+INSTALLED_APPS += [
+    'kombu.transport.django',
+    'demoapp',
+    'djcelery',
+]
+LANGUAGE_CODE = 'zh-hans'
+
+TIME_ZONE = 'Asia/Shanghai'
+
+# celery settings
+# celery中间人 redis://redis服务所在的ip地址:端口/数据库号
+BROKER_URL = 'redis://localhost:6379/3'
+
+# celery内容等消息的格式设置
+CELERY_ACCEPT_CONTENT = ['application/json', ]
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# celery时区设置，使用settings中TIME_ZONE同样的时区
+CELERY_TIMEZONE = TIME_ZONE
+
+import djcelery
+djcelery.setup_loader()
+# celery结果返回，可用于跟踪结果
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/3'
+```
+>开头增加如上配置文件，根据实际情况配置redis的地址和端口，时区一定要设置为Asia/Shanghai。否则时间不准确回影响定时任务的运行。
+>
+>上面代码首先导出djcelery模块，并调用setup_loader方法加载有关配置；注意配置时区，不然默认使用UTC时间会比东八区慢8个小时。其中INSTALLED_APPS末尾添加两项，分别表示添加celery服务和自己定义的apps服务。
+
+* 定义celery实例
+```text
+# 与 manage.py 同级目录建立 celery.py
+
+from __future__ import absolute_import, unicode_literals
+
+from celery import Celery
+from django.conf import settings
+import os
+
+# 获取当前文件夹名，即为该Django的项目名
+project_name = os.path.split(os.path.abspath('.'))[-1]
+project_settings = '%s.settings' % project_name
+
+# 设置环境变量
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', project_settings)
+
+# 实例化Celery
+app = Celery(project_name)
+
+# 使用django的settings文件配置celery
+app.config_from_object('django.conf:settings')
+
+# Celery加载所有注册的应用
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+```
+>接着，需要在 myproject/myproject/__init__.py 模块中导入这个 Celery 实例（也就是 app）。这样可以确保当 Django 启动时可以加载这个 app，并且 @shared_task 装饰器（后面会提到）也能使用这个 app.
+```text
+# myproject/myproject/__init__.py
+
+from __future__ import absolute_import
+
+# This will make sure the app is always imported when
+# Django starts so that shared_task will use this app.
+from .celery import app as celery_app # noqa
+```
+>使用 @shared_task 装饰器
+你很可能在可重用的 Django APP 中编写了一些任务，但是 Django APP 不能依赖于具体的 Django 项目，所以你无法直接导入 Celery 实例。
+@shared_task 装饰器能让你在没有具体的 Celery 实例时创建任务：
+* task
+myproject/demoapp/task.py
+
+```text
+from __future__ import absolute_import
+from celery import shared_task
+import time
+
+
+@shared_task
+def add(x, y):
+    return x + y
+
+
+@shared_task
+def mul(x, y):
+    return x * y
+
+
+@shared_task
+def xsum(numbers):
+    return sum(numbers)
+
+
+@shared_task
+def time_consuming_fun():
+    for i in range(5):
+        time.sleep(1)
+        print(i)
+    return 'ok'
+```
+* 视图
+myproject/demoapp/views.py
+```text
+from django.shortcuts import render
+from django.http import JsonResponse
+from .task import *
+
+
+def celery_test(request):
+    # 异步调用
+    time_consuming_fun.delay()
+    # 直接调用
+    # time_consuming_fun()
+    return JsonResponse({'msg': 'ok', 'code': 200})
+```
+* urls
+```text
+myproject/myproject/urls.py
+
+url(r'^', include('demoapp.urls')),
+
+myproject/demoapp/urls.py
+
+from django.conf.urls import url
+from . import views
+
+urlpatterns = [
+    url(r'^celerytest/$', views.celery_test),
+]
+```
+* 迁移
+```text
+python manage.py makemigrations
+python manage.py migrate
+```
+* 超级管理员
+```text
+python manage.py createsuperuser
+
+root qew96898
+```
+* 启动django-web
+```text
+python manage.py runserver
+```
+* 启动celery
+
+在项目根目录下，即managy同级文件目录下，输入命令：
+```text
+
+ celery -A myproject worker -l info
+```
+此时celery在终端窗口运行，关闭终端celery就会停止。
+
+输入命令
+```
+celery multi start w1 -A myproject -l info --logfile = celerylog.log --pidfile = celerypid.pid
+```
+此时celery为守护进程，日志记录在celerylog.log里。
+
+日志文件可以指定路径PATH/celerylog.log，此时会在指定路径下创建日志文件。进程号文件类似。
+
+停止或重启将start换为stop或restart即可。
+
+所以需记录w1，即需记录woker的名称来方便重启和停止。
