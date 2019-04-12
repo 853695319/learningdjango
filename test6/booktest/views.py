@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.core.cache import cache
+from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 from .forms import *
 from .models import *
 
@@ -9,9 +12,6 @@ def myeditor(request):
         # 创建一个表单实例,并且使用表单数据填充request请求:
         form = PostForm(request.POST)
         # 检查数据有效性:
-        # Validate the form:
-        # the captcha field will **automatically** check the input!!
-        # 不区分大小写
         if form.is_valid():
             # 获得数据
             data = form.cleaned_data['content']
@@ -26,3 +26,24 @@ def myeditor(request):
     else:
         myform = PostForm()
     return render(request, 'booktest/myeditor.html', {'myform': myform})
+
+
+# 缓存
+# @cache_page(60*10)  # timeout=60*10
+def cache1(request):
+    # return HttpResponse('hello1')
+
+    # 在缓存过期前修改返回数据，看缓存是否有效
+    # return HttpResponse('hello2')
+
+    # 缓存数据
+    # 设置缓存
+    # cache.set('key1', 'value', 600)
+
+    # 得到缓存
+    # print('\ncache.get:'+cache.get('key1')+'\n')
+    # return render(request, 'booktest/cache1.html')
+
+    # 清空redis缓存
+    cache.clear()
+    return HttpResponse('cache clear')

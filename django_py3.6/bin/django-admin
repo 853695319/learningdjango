@@ -1,5 +1,4 @@
-#!/home/chenzhixiong/09-django/learningdjango/django_py3.6/bin/python3
-
+#!/home/chenzhixiong/09-django/learningdjango/django_py3.6/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
