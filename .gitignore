@@ -106,3 +106,6 @@ venv.bak/
 # mysql的相关文件夹
 myconfig/
 mysqldata/
+
+# ckeditor静态文件
+ckeditor/
