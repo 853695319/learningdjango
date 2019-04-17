@@ -37,8 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 应用
     'df_user',
     'df_goods',
+
+    # 插件
+    'ckeditor',
+
 ]
 
 MIDDLEWARE = [
@@ -129,3 +135,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# 开发阶段上传目录
+MEDIA_ROOT = os.path.join(BASE_DIR, "static")
+# 考虑到将来部署 收集静态文件到部署目录
+# MEDIA_ROOT = 'var/www/dailyfresh/static'
