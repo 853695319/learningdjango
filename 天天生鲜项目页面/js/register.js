@@ -34,7 +34,6 @@ $(function(){
 			error_check = true;
 			$(this).siblings('span').html('请勾选同意');
 			$(this).siblings('span').show();
-            }
 		}
 	});
 
