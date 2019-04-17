@@ -64,9 +64,10 @@ $(function(){
 		}
 		else
 		{
+			// alert('ajax');
 		    var url = '/user/register-exit/?uname=' + $('#user_name').val();
 		    $.get(url, function (data) {
-		        if (data.count > 1) {
+		        if (data.count > 0) {
 		            $('#user_name').next().html('该用户名已存在').show();
 		            error_name = true;
 		        } else {

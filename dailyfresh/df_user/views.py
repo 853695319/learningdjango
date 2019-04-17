@@ -166,13 +166,34 @@ def login_handle(request):
 
 
 def info(request):
-    context = {'title': '用户中心'}
+    user_id = request.session.get('user_id')
+    userinfo = UserInfo.objects.get(id=user_id)
+    context = {
+        'title': '用户中心',
+        'user_name': userinfo.uname,
+        'user_email': userinfo.umail
+    }
     return render(request, 'df_user/user_center_info.html', context)
 
 
 def order(request):
-    return render(request, 'df_user/user_center_order.html')
+    context = {'title': '用户中心'}
+    return render(request, 'df_user/user_center_order.html', context)
 
 
 def site(request):
-    return render(request, 'df_user/user_center_site.html')
+    user_id = request.session.get('user_id')
+    userinfo = UserInfo.objects.get(id=user_id)
+    if request.method == 'POST':
+        post = request.POST
+        userinfo.ushou = post.get('ushou')
+        userinfo.uaddress = post.get('uaddress')
+        userinfo.uyoubian = post.get('uyoubian')
+        userinfo.uphone = post.get('uphone')
+        userinfo.save()
+
+    context = {
+        'title': '用户中心',
+        'user': userinfo,
+    }
+    return render(request, 'df_user/user_center_site.html', context)
