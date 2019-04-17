@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.http import JsonResponse
 import hashlib
+from django.http import HttpResponseRedirect
 
 
+# 注册
 def register(request):
     context = {'title': '注册'}
     return render(request, 'df_user/register.html', context)
@@ -34,7 +36,8 @@ def register_handle(request):
     user.umail = uemail
     user.save()
 
-    return render(request, 'df_user/login.html')
+    # 转到用户登录界面登录
+    return redirect('/user/login/')
 
 
 def register_exit(request):
@@ -43,12 +46,133 @@ def register_exit(request):
     return JsonResponse({'count': count})
 
 
+# 登录
 def login(request):
-    context = {
-        'title': '登录'
-    }
+    if not request.POST:
+        user_name = request.COOKIES.get('uname', '')
+        context = {
+            'title': '用户登录',
+            'uname': user_name,
+
+            # 和下面格式保持一致，如果不设置返回值，js会报错 if (==1) error
+            'error_name': 0,
+            'error_pwd': 0
+        }
+    else:
+        # 接收请求
+        post = request.POST
+        uname = post.get('username')
+        upwd = post.get('pwd')
+        # 勾选了提交 1 ，不勾选就没这个key，设默认 0 不记住用户名
+        jizhu = post.get('jizhu', 0)
+
+        # 查询
+        userlist = UserInfo.objects.filter(uname=uname)  # 不用get防止报错
+
+        # 判断
+        if len(userlist) == 1:
+            sha1 = hashlib.sha1()
+            sha1.update(upwd.encode())
+            upwd_sha1 = sha1.hexdigest()
+
+            if upwd_sha1 == userlist[0].upwd:
+                # 转到用户信息
+                redi = HttpResponseRedirect('/user/info/')
+
+                # cookies记住用户名
+                if jizhu != 0:
+                    redi.set_cookie('uname', uname)
+                else:
+                    redi.set_cookie('uname', '', max_age=-1)  # 立刻过期
+
+                # session记下常用信息
+                request.session['user_id'] = userlist[0].id
+                request.session['uname'] = uname
+
+                return redi
+            else:
+                context = {
+                    'title': '用户登录',
+                    'uname': uname,
+                    'upwd': upwd,
+                    'error_name': 0,
+                    'error_pwd': 1  # 密码错误
+                }
+
+        else:
+            context = {
+                'title': '用户登录',
+                'uname': uname,
+                'upwd': upwd,
+                'error_name': 1,  # 用户名错误
+                'error_pwd': 0
+            }
+
     return render(request, 'df_user/login.html', context)
 
 
-def login_handle(requset):
-    return
+def login_handle(request):
+
+    # 接收请求
+    post = request.POST
+    uname = post.get('username')
+    upwd = post.get('pwd')
+    # 勾选了提交 1 ，不勾选就没这个key，设默认 0 不记住用户名
+    jizhu = post.get('jizhu', 0)
+
+    # 查询
+    userlist = UserInfo.objects.filter(uname=uname)  # 不用get防止报错
+
+    # 判断
+    if len(userlist) == 1:
+        sha1 = hashlib.sha1()
+        sha1.update(upwd.encode())
+        upwd_sha1 = sha1.hexdigest()
+
+        if upwd_sha1 == userlist[0].upwd:
+            # 转到用户信息
+            redi = HttpResponseRedirect('/user/info/')
+
+            # cookies记住用户名
+            if jizhu != 0:
+                redi.set_cookie('uname', uname)
+            else:
+                redi.set_cookie('uname', '', max_age=-1)  # 立刻过期
+
+            # session记下常用信息
+            request.session['user_id'] = userlist[0].id
+            request.session['uname'] = uname
+
+            return redi
+        else:
+            context = {
+                'title': '用户登录',
+                'uname': uname,
+                'upwd': upwd,
+                'error_name': 0,
+                'error_pwd': 1  # 密码错误
+            }
+
+    else:
+        context = {
+            'title': '用户登录',
+            'uname': uname,
+            'upwd': upwd,
+            'error_name': 1,  # 用户名错误
+            'error_pwd': 0
+        }
+
+    return render(request, 'df_user/login.html', context)
+
+
+def info(request):
+    context = {'title': '用户中心'}
+    return render(request, 'df_user/user_center_info.html', context)
+
+
+def order(request):
+    return render(request, 'df_user/user_center_order.html')
+
+
+def site(request):
+    return render(request, 'df_user/user_center_site.html')
