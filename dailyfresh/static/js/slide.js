@@ -5,7 +5,7 @@ $(function(){
 	var prevli = 0;
 	var $prev = $('.prev');
 	var $next = $('.next');
-	var ismove = false;
+	var ismove = false;  // 标记运动状态，防止用户暴力操作
 	var timer = null;
 	$slides.not(':first').css({left:760});
 	$slides.each(function(index, el) {

@@ -1,4 +1,4 @@
-{% extends 'base-user-center.html' %}
+{% extends 'base.html' %}
 {% block left_menu %}
 				<li><a href="/user/info/">· 个人信息</a></li>
 				<li><a href="/user/order/">· 全部订单</a></li>
@@ -11,7 +11,7 @@
 					<dl>
 						<dt>当前地址：</dt>
                         {% if user.uaddress %}
-						<dd>{{ user.uaddress }} ({{ user.uname }} 收) {{ user.uphone }}</dd>
+						<dd>{{ user.uaddress }} ({{ user.ushou }} 收) {{ user.uphone }}</dd>
 						{% else %}
 						<dd>(空)</dd>
 						{% endif %}

@@ -170,6 +170,7 @@ def info(request):
     userinfo = UserInfo.objects.get(id=user_id)
     context = {
         'title': '用户中心',
+        'user_page': 1,
         'user_name': userinfo.uname,
         'user_email': userinfo.umail
     }
@@ -177,7 +178,10 @@ def info(request):
 
 
 def order(request):
-    context = {'title': '用户中心'}
+    context = {
+        'title': '用户中心',
+        'user_page': 1,
+    }
     return render(request, 'df_user/user_center_order.html', context)
 
 
@@ -195,5 +199,6 @@ def site(request):
     context = {
         'title': '用户中心',
         'user': userinfo,
+        'user_page': 1,
     }
     return render(request, 'df_user/user_center_site.html', context)
