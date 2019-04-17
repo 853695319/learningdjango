@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import *
+from django.http import JsonResponse
 import hashlib
 
 
 def register(request):
-    return render(request, 'df_user/register.html')
+    context = {'title': '注册'}
+    return render(request, 'df_user/register.html', context)
 
 
 def register_handle(request):
@@ -35,5 +37,18 @@ def register_handle(request):
     return render(request, 'df_user/login.html')
 
 
+def register_exit(request):
+    user_name = request.GET.get('uname')
+    count = UserInfo.objects.filter(uname=user_name).count()
+    return JsonResponse({'count': count})
+
+
 def login(request):
-    return render(request, 'df_user/login.html')
+    context = {
+        'title': '登录'
+    }
+    return render(request, 'df_user/login.html', context)
+
+
+def login_handle(requset):
+    return

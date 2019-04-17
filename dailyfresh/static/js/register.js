@@ -34,10 +34,25 @@ $(function(){
 			error_check = true;
 			$(this).siblings('span').html('请勾选同意');
 			$(this).siblings('span').show();
-            }
 		}
 	});
 
+	$('.reg_form form').submit(function() {
+		check_user_name();
+		check_pwd();
+		check_cpwd();
+		check_email();
+
+		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+
+	});
 
 	function check_user_name(){
 		var len = $('#user_name').val().length;
@@ -49,8 +64,16 @@ $(function(){
 		}
 		else
 		{
-			$('#user_name').next().hide();
-			error_name = false;
+		    var url = '/user/register-exit/?uname=' + $('#user_name').val();
+		    $.get(url, function (data) {
+		        if (data.count > 1) {
+		            $('#user_name').next().html('该用户名已存在').show();
+		            error_name = true;
+		        } else {
+                    $('#user_name').next().hide();
+                    error_name = false;
+		        }
+		    });
 		}
 	}
 
@@ -66,7 +89,7 @@ $(function(){
 		{
 			$('#pwd').next().hide();
 			error_password = false;
-		}		
+		}
 	}
 
 
@@ -84,8 +107,8 @@ $(function(){
 		{
 			$('#cpwd').next().hide();
 			error_check_password = false;
-		}		
-		
+		}
+
 	}
 
 	function check_email(){
@@ -106,22 +129,6 @@ $(function(){
 	}
 
 
-	$('#reg_form').submit(function() {
-		check_user_name();
-		check_pwd();
-		check_cpwd();
-		check_email();
-
-		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-
-	});
 
 
 

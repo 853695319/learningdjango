@@ -1874,3 +1874,8 @@ celery multi start w1 -A myproject -l info --logfile = celerylog.log --pidfile =
 停止或重启将start换为stop或restart即可。
 
 所以需记录w1，即需记录woker的名称来方便重启和停止。
+
+
+# 天天生鲜
+## 注册
+账户密码1111111111 10个1
