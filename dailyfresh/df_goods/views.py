@@ -51,31 +51,51 @@ def index(request):
 
 
 def goods_detail(request, good_id):
+
+    # 查询商品
+    good = GoodsInfo.objects.get(id=int(good_id))
+
+    # 纪录点击量
+    good.gclick += 1
+    good.save()  # 记得保存！！
+
+    # 推荐商品
+    news = GoodsInfo.objects.filter(gtype_id=good.gtype_id).order_by('-id')[:2]
+
     context = {
         # 模板继承
-        'title': '商品详情',
+        'title': good.gtitle,
         'goods_page': 1,
-        'goods_index': 2
+        'goods_index': 2,
+
+        # 商品详情
+        'good': good,
+        'type': good.gtype,
+        'news': news,
+        'initnum': '1',
     }
     return render(request, 'df_goods/detail.html', context)
 
 
-def gooods_list(request, type_id, page_num, sort_id):
+def goods_list(request, type_id, page_num, sort_id):
 
     # 分类信息
     good_type = TypeInfo.objects.get(id=int(type_id))
 
     # 新品推荐
-    goods_new = good_type.goodsinfo_set.sort('-id')[0:2]
-    if sort_id == 1:  # 默认 最新
-        goods_list = good_type.goodsinfo_set.order_by('-id')
+    goods_new = good_type.goodsinfo_set.order_by('-id')[0:2]
+
+    # UnboundLocalError: local variable 'x' referenced before assignment
+    goodslist = []
+    if sort_id == '1':  # 默认 最新 sort_id = string
+        goodslist = good_type.goodsinfo_set.order_by('-id')
     elif sort_id == '2':  # 价格降序
-        goods_list = good_type.goodsinfo_set.order_by('-gprice')
+        goodslist = good_type.goodsinfo_set.order_by('-gprice')
     elif sort_id == '3':  # 点击量
-        goods_list = good_type.goodsinfo_set.order_by('gclick')
+        goodslist = good_type.goodsinfo_set.order_by('gclick')
 
     # 分页
-    paginator = Paginator(goods_list, 10)
+    paginator = Paginator(goodslist, 10)
 
     # 取得相应页的内容
     page = paginator.page(int(page_num))
