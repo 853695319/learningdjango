@@ -674,6 +674,18 @@ pip install mysql-connector-python
 ```
 安装成功
 
+bug:
+[AttributeError: 'decimal.Decimal' object has no attribute 'decode'](https://stackoverflow.com/questions/52789427/attributeerror-decimal-decimal-object-has-no-attribute-decode)
+
+问题：出在`mysql-connector-python`版本太高
+解决：
+```text
+pip install mysql-connector-python==8.0.5
+
+Versions as new as 8.0.12 seem to work, failing after 8.0.13
+```
+
+
 * 在mysql中创建数据库
 ```markdown
 CREATE DATABASE test2 CHARSET utf8 COLLATE utf8_general_ci;

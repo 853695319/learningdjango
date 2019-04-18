@@ -27,3 +27,34 @@ class GoodsInfo(models.Model):
 
     def __str__(self):
         return self.gtitle
+
+
+"""
+快速制造测试数据
+>>> python manage.py shell
+>>> for i in range(20):
+...     good = GoodsInfo()
+...     good.gtitle = '速冻食品%d' % i
+...     good.gpic = 'df_goods/goods009.jpg'
+...     good.gprice = 10.51 + i + i * 0.1
+...     good.gunit = '500g'
+...     good.gclick = 30 + i
+...     good.gjianjie = '简介：速冻食品-%d' % i
+...     good.gkucun = i*25
+...     good.gcontent = good.gtitle * 2
+...     good.gtype_id = 6
+...     good.save()
+
+for i in range(20):
+    good = GoodsInfo()
+    good.gtitle = '速冻食品%d' % i
+    good.gpic = 'df_goods/goods009.jpg'
+    good.gprice = 10.51 + i + i * 0.1
+    good.gunit = '500g'
+    good.gclick = 30 + i
+    good.gjianjie = '简介：速冻食品-%d' % i
+    good.gkucun = i*25
+    good.gcontent = good.gtitle * 2
+    good.gtype_id = 6
+    good.save()
+"""
