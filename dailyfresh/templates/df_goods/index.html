@@ -37,9 +37,13 @@
 			<h3 class="fl" id="model01">新鲜水果</h3>
 			<div class="subtitle fl">
 				<span>|</span>
-				<a href="#">鲜芒</a>
-				<a href="#">加州提子</a>
-				<a href="#">亚马逊牛油果</a>
+<!--				最热的4种产品-->
+				{% for good in type_click0 %}
+				<a href="/{{ good.id }}/">{{ good.gtitle|slice:'10' }}...</a>
+                {% endfor %}
+<!--				<a href="#">鲜芒</a>-->
+<!--				<a href="#">加州提子</a>-->
+<!--				<a href="#">亚马逊牛油果</a>-->
 			</div>
 			<a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
 		</div>
@@ -47,11 +51,13 @@
 		<div class="goods_con clearfix">
 			<div class="goods_banner fl"><img src="/static/images/banner01.jpg"></div>
 			<ul class="goods_list fl">
+				{% for good in type_new0 %}
 				<li>
-					<h4><a href="#">草莓</a></h4>
-					<a href="#"><img src="/static/images/goods/goods003.jpg"></a>
-					<div class="prize">¥ 30.00</div>
+					<h4><a href="/{{ good.id }}/">{{ good.gtitle }}</a></h4>
+					<a href="/{{ good.id }}/"><img src="/static/{{ good.gpic }}"></a>
+					<div class="prize">￥ {{ good.gprice }}</div>
 				</li>
+				{% endfor %}
 				<li>
 					<h4><a href="#">葡萄</a></h4>
 					<a href="#"><img src="/static/images/goods/goods002.jpg"></a>

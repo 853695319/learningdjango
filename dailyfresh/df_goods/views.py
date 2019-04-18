@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import *
+from django.core.paginator import Paginator
 
 
 def index(request):
@@ -49,7 +50,7 @@ def index(request):
     return render(request, 'df_goods/index.html', context)
 
 
-def goods_detail(request):
+def goods_detail(request, good_id):
     context = {
         # 模板继承
         'title': '商品详情',
@@ -59,11 +60,37 @@ def goods_detail(request):
     return render(request, 'df_goods/detail.html', context)
 
 
-def gooods_list(request):
+def gooods_list(request, type_id, page_num, sort_id):
+
+    # 分类信息
+    good_type = TypeInfo.objects.get(id=int(type_id))
+
+    # 新品推荐
+    goods_new = good_type.goodsinfo_set.sort('-id')[0:2]
+    if sort_id == 1:  # 默认 最新
+        goods_list = good_type.goodsinfo_set.order_by('-id')
+    elif sort_id == '2':  # 价格降序
+        goods_list = good_type.goodsinfo_set.order_by('-gprice')
+    elif sort_id == '3':  # 点击量
+        goods_list = good_type.goodsinfo_set.order_by('gclick')
+
+    # 分页
+    paginator = Paginator(goods_list, 10)
+
+    # 取得相应页的内容
+    page = paginator.page(int(page_num))
+
     context = {
         # 模板继承
         'title': '商品列表',
         'goods_page': 1,
-        'goods_index': 2
+        'goods_index': 2,
+
+        # 商品列表
+        'page': page,
+        'paginator': paginator,
+        'good_type': good_type,
+        'sort_id': sort_id,
+        'goods_new': goods_new
     }
     return render(request, 'df_goods/list.html', context)
