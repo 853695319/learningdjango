@@ -16,11 +16,14 @@ def login_wrapper(func):
             return func(request, *args, **kwargs)
         else:
             redi = HttpResponseRedirect(redirect_to='/user/login/')
-
-            # 返回完整路径，并包括附加的查询信息
             redi.set_cookie('url', request.get_full_path())
-            print('request.get_full_path:{0}'.format(request.get_full_path()))
-            print('request.path_info:{0}'.format(request.path_info))
             return redi
 
     return inner_login
+
+
+"""
+http://127.0.0.1:8000/200/?type=10
+request.path:表示当前路径， /200/
+request.get_full_path():表示返回完整路径（但不包含域名），并包括附加的查询信息, /200/?type=10
+"""

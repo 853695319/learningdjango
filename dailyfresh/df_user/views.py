@@ -3,6 +3,7 @@ from .models import *
 from django.http import JsonResponse
 import hashlib
 from django.http import HttpResponseRedirect
+from .user_decorator import login_wrapper
 
 
 # 注册
@@ -49,6 +50,7 @@ def register_exit(request):
 # 登录
 def login(request):
     if not request.POST:
+        # 第一次 GET 方法渲染页面
         user_name = request.COOKIES.get('uname', '')
         context = {
             'title': '用户登录',
@@ -76,8 +78,9 @@ def login(request):
             upwd_sha1 = sha1.hexdigest()
 
             if upwd_sha1 == userlist[0].upwd:
-                # 转到用户信息
-                redi = HttpResponseRedirect('/user/info/')
+                # 加入登录验证后，用户登录后，跳转回登录前的操作页面，如购物车
+                url = request.COOKIES.get('url', default='/')  # 默认跳转到主页
+                redi = HttpResponseRedirect(url)
 
                 # cookies记住用户名
                 if jizhu != 0:
@@ -86,7 +89,7 @@ def login(request):
                     redi.set_cookie('uname', '', max_age=-1)  # 立刻过期
 
                 # session记下常用信息
-                request.session['user_id'] = userlist[0].id
+                request.session['user_id'] = userlist[0].id  # 可以用来判断用户是否已经登录
                 request.session['uname'] = uname
 
                 return redi
@@ -111,6 +114,7 @@ def login(request):
     return render(request, 'df_user/login.html', context)
 
 
+# 该方法集成到login了
 def login_handle(request):
 
     # 接收请求
@@ -165,6 +169,8 @@ def login_handle(request):
     return render(request, 'df_user/login.html', context)
 
 
+# 请求网址的时候进行验证
+@login_wrapper
 def info(request):
     user_id = request.session.get('user_id')
     userinfo = UserInfo.objects.get(id=user_id)
@@ -177,6 +183,7 @@ def info(request):
     return render(request, 'df_user/user_center_info.html', context)
 
 
+@login_wrapper
 def order(request):
     context = {
         'title': '用户中心',
@@ -185,6 +192,7 @@ def order(request):
     return render(request, 'df_user/user_center_order.html', context)
 
 
+@login_wrapper
 def site(request):
     user_id = request.session.get('user_id')
     userinfo = UserInfo.objects.get(id=user_id)
