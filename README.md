@@ -1133,6 +1133,23 @@ www.itcast.cn/
 解决办法：
 注释`setting.py`中 MIDDLEWARE_CLASSES的'django.middleware.csrf.CsrfViewMiddleware',
 
+#### COOKIES session
+```text
+# COOKIES，在response设置
+response.set_cookie(key:str,value:str)
+# request取
+request.COOKIES.get(key, default=None)
+
+# session 在request设置
+request.session[key:str]=value:str
+# 取
+request.session.get()
+# 模板上
+request.session[key:str]
+```
+
+
+
 * session 测试遇到OperationalError
 
 >OperationalError at /booktest/sessionTest2_handle/

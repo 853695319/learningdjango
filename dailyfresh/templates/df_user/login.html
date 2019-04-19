@@ -1,7 +1,6 @@
 {% extends 'base_foot.html' %}
 
 {% block head %}
-<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 <script>
 	$(function () {
 		var name_error = false;
@@ -80,9 +79,9 @@
 
 					<form action="/user/login/" method="post">
                         {% csrf_token %}
-						<input type="text" name="username" value="{{ uname }}" class="name_input" placeholder="请输入用户名">
+						<input type="text" name="username" value="{{ uname }}" class="name_input" placeholder="请输入用户名" autocomplete="off">
 						<div class="user_error">输入错误</div>
-						<input type="password" name="pwd"  value="{{ upwd }}" class="pass_input" placeholder="请输入密码">
+						<input type="password" name="pwd"  value="{{ upwd }}" class="pass_input" placeholder="请输入密码" autocomplete="off">
 						<div class="pwd_error">输入错误</div>
 						<div class="more_input clearfix">
 							<input type="checkbox" name="jizhu" value="1" checked="checked">

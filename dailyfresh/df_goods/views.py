@@ -50,10 +50,10 @@ def index(request):
     return render(request, 'df_goods/index.html', context)
 
 
-def goods_detail(request, good_id):
+def goods_detail(request, new_id):
 
     # 查询商品
-    good = GoodsInfo.objects.get(id=int(good_id))
+    good = GoodsInfo.objects.get(id=int(new_id))
 
     # 纪录点击量
     good.gclick += 1
@@ -74,7 +74,44 @@ def goods_detail(request, good_id):
         'news': news,
         'initnum': '1',
     }
-    return render(request, 'df_goods/detail.html', context)
+    response = render(request, 'df_goods/detail.html', context)
+
+    # 可以改进，通过session判断该用户是否已经登录，如果登录了，就给他提供最经浏览
+    # 在cookie加盐，盐为user_id，这样就可以实现对应用户看对应的信息了吧
+    # 不然同一浏览器浏览后，别人再上号，会看到其他人的记录
+    # 但是同一个cookie['view_list'],也会被别人的记录覆盖，上一个人的记录就不见了
+    user_id = request.session.get('user_id', '')
+    if not user_id:
+        return response
+
+    # 记住用户最近浏览
+    new_id = "%d" % good.id
+
+    # 从cookies中获取最近浏览
+    key = 'view_list_{}'.format(user_id)
+    view_list = request.COOKIES.get(key, '')
+    # view_list = request.get_signed_cookie('view_list', default='', salt=str(user_id))
+
+    if view_list == '':
+        view_list = new_id  # 浏览记录为空，直接添加
+    else:
+        # 分割成列表
+        good_id_list = view_list.split(',')
+
+        # 如果商品已经记录，则删除，并将该商品添加到第一个位！
+        if new_id in good_id_list:
+            good_id_list.remove(new_id)
+        good_id_list.insert(0, new_id)
+
+        # 如果列表长度大于6，删除最后一个
+        if len(good_id_list) > 5:
+            good_id_list.pop()
+        # 拼接成字符串
+        view_list = ','.join(good_id_list)
+
+    response.set_cookie(key, view_list)
+    # response.set_signed_cookie('view_list', view_list, salt)
+    return response
 
 
 def goods_list(request, type_id, page_num, sort_id):

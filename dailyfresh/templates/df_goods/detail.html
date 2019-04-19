@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
 <script>
 	$(function () {
 
@@ -25,7 +24,7 @@
 				if (num > 1) {
 					num--;
 				} else {
-					num = 0;
+					num = 1;
 				}
 				inputValue(num);
 				return num;
@@ -37,8 +36,8 @@
 			if (num > 0) {
 				inputValue(num);
 			} else {
-				inputValue(0);
-				$numShow.val(0)
+				inputValue(1);
+				$numShow.val(1)
 			}
 		});
 

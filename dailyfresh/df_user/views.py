@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpRequest
 import hashlib
 from django.http import HttpResponseRedirect
 from .user_decorator import login_wrapper
+from df_goods.models import GoodsInfo
 
 
 # 注册
@@ -79,7 +80,7 @@ def login(request):
 
             if upwd_sha1 == userlist[0].upwd:
                 # 加入登录验证后，用户登录后，跳转回登录前的操作页面，如购物车
-                url = request.COOKIES.get('url', default='/')  # 默认跳转到主页
+                url = request.COOKIES.get('url', '/')  # 默认跳转到主页
                 redi = HttpResponseRedirect(url)
 
                 # cookies记住用户名
@@ -88,7 +89,8 @@ def login(request):
                 else:
                     redi.set_cookie('uname', '', max_age=-1)  # 立刻过期
 
-                # session记下常用信息
+                # session记下常用信息,状态保持，可用与表示用户是否登录
+                # {% if request.session.uname|default:'' != '' %}
                 request.session['user_id'] = userlist[0].id  # 可以用来判断用户是否已经登录
                 request.session['uname'] = uname
 
@@ -112,6 +114,12 @@ def login(request):
             }
 
     return render(request, 'df_user/login.html', context)
+
+
+def logout(request):
+    # 删除当前的会话数据并删除会话的Cookie
+    request.session.flush()
+    return redirect('/')
 
 
 # 该方法集成到login了
@@ -172,13 +180,33 @@ def login_handle(request):
 # 请求网址的时候进行验证
 @login_wrapper
 def info(request):
+    # 查询用户
     user_id = request.session.get('user_id')
     userinfo = UserInfo.objects.get(id=user_id)
+
+    # 用户最近浏览
+    key = 'view_list_{}'.format(user_id)
+    view_list = request.COOKIES.get(key, '')
+    # view_list = request.get_signed_cookie('view_list', default='', salt=str(user_id))
+    good_id_list = view_list.split(',')
+    # 空字符串，也能分割成列表[''] len=1，而空字符串不能用int
+
+    # 不要用 GoodsInfo.objects.filter(id__in=good_id_list)
+    # 因为查询结果按ID排序
+    goods_list = []
+    try:
+        for good_id in good_id_list:
+            good = GoodsInfo.objects.get(id=int(good_id))
+            goods_list.append(good)
+    except ValueError:
+        pass
+
     context = {
         'title': '用户中心',
         'user_page': 1,
         'user_name': userinfo.uname,
-        'user_email': userinfo.umail
+        'user_email': userinfo.umail,
+        'goods_list': goods_list
     }
     return render(request, 'df_user/user_center_info.html', context)
 

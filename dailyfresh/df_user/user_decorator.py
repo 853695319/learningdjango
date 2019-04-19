@@ -12,7 +12,7 @@ def login_wrapper(func):
         # func(request, *args, **kwargs) -> deco(func)(request, *args, **kwargs)
 
         # 已经登录的用户，session会记录id
-        if request.session.get('user.id', default=False):
+        if request.session.get('user_id', None):
             return func(request, *args, **kwargs)
         else:
             redi = HttpResponseRedirect(redirect_to='/user/login/')
