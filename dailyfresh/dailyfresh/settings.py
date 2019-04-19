@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # 应用
     'df_user',
     'df_goods',
+    'df_cart',
 
     # 插件
     'ckeditor',
