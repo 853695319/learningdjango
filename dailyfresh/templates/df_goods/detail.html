@@ -12,7 +12,7 @@
 
 		$add.click(function () {
 			$numShow.val(function (index, value) {
-				num =  1 + parseInt(value);
+				var num =  1 + parseInt(value);
 				inputValue(num);
 				return num;
 			});
@@ -43,7 +43,7 @@
 
 		function inputValue(num){
 			$totalNum.text(function () {
-				sum = num*goodPrice
+				var sum = num * (goodPrice*100) / 100
 				return sum.toFixed(2) + '元'
 			});
 		}
