@@ -8,11 +8,15 @@
 		var $add = $('a.add ');
 			$minus = $('a.minus');
 			$input = $('input.num_show');
+			$sumPrice = $('ul.settlements li.col03 em');
+		
+		sumGoodsPrice();
 
 		$add.click(function () {
 			$(this).prev('input').val(function (index, value) {
 				num =  1 + parseInt(value);
 				totalValue.call(this, num);
+				sumGoodsPrice();
 				return num;
 			});
 		});
@@ -23,6 +27,7 @@
 				if (num > 1) {
 					num--;
 					totalValue.call(this, num);
+					sumGoodsPrice();
 				} else {
 					num = 1
 				}
@@ -37,20 +42,42 @@
 				num = 1;
 			}
 			totalValue.call(this, num);
+			sumGoodsPrice();
 
 		});
 
+		// 商品数量
+		$('.settlements .col03 b').text($input.length);
+		$('.total_count em').text($input.length);
+
+		// 商品小计
 		function totalValue(num) {
 			var price = parseFloat($(this).closest('li').siblings('li.col05').text());
 			$(this).closest('li').siblings('li.col07').text(function () {
-				var sum = price*100 * num / 100
+				var sum = price*100 * num / 100;
 				// console.log(
 				// 	'price:'+price,
 				// 	'num:'+num,
 				// 	'sum:'+sum
 				// )
-				return sum.toFixed(2) + '元'
+				return sum.toFixed(2) + '元';
 			});
+		}
+
+		// 商品价格总计
+		function sumGoodsPrice() {
+			// 清空商品总计
+			$sumPrice.empty();
+
+			// 累加商品小计
+			var sum = 0;
+			$('.cart_list_td .col07').each(function (i, e) {
+				var goodCount = parseFloat($(this).text());
+				// console.log('price:'+goodCount);
+				sum = (sum*100 + goodCount*100) / 100;
+				// console.log('sum:'+sum);
+			})
+			$sumPrice.text(sum.toFixed(2));
 		}
 
 	});
@@ -102,11 +129,10 @@
 		<li class="col08"><a href="javascript:;">删除</a></li>
 	</ul>
 {% endcomment %}
-
 	<ul class="settlements">
 		<li class="col01"><input autocomplete="off" type="checkbox" name="" checked=""></li>
 		<li class="col02">全选</li>
-		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b>2</b>件商品</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b></b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
 {% endblock df_goods_content%}
