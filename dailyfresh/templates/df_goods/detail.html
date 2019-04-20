@@ -41,6 +41,18 @@
 			}
 		});
 
+		// ajax方法调整到footer的动画方法里一起执行
+		// $('#add_cart').click(function () {
+		// 	// ajax获得购买商品件数
+		// 	var count = $numShow.val();
+		// 	var url = '/cart/add-{{ good.id }}-'+count;
+		// 	$.get(url, function (data) {
+		// 		// 更新购物车件数
+		// 		$('#show_count').text(data.count);
+		// 	});
+
+		// })
+
 		function inputValue(num){
 			$totalNum.text(function () {
 				var sum = num * (goodPrice*100) / 100
@@ -137,18 +149,33 @@
 
 		var $to_x = $('#show_count').offset().top;
 		var $to_y = $('#show_count').offset().left;
-
+		// 获取加入购物车按钮的位置，并通过层级藏在下面，然后点击事件触发动画
 		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
 		$('#add_cart').click(function(){
-			$(".add_jump").stop().animate({
-				'left': $to_y+7,
-				'top': $to_x+7},
-				"fast", function() {
-					$(".add_jump").fadeOut('fast',function(){
-						$('#show_count').html(2);
-					});
+			// 判断用户是否已经登录,如果登录按钮存在，则提醒用户登录,并跳转到登录页面
+			if ($('.login_btn').length) {
+				alert('请登录后在购买');
+				// 当前页面跳转
+				location.href = "{% url 'user:login' %}";
+				return;
+			}
 
-			});
+			//动画
+			$(".add_jump").stop().animate(
+				{'left': $to_y+7, 'top': $to_x+7},
+				"fast", 
+				function() {
+					$(".add_jump").fadeOut('fast');
+				}
+			);
+
+			// 异步 ajax获得购买商品件数
+			var num = $numShow.val();
+			var url = '/cart/add-{{ good.id }}-'+num;
+			$.get(url, function (data) {
+				// 更新购物车件数
+				$('#show_count').html(data.count);
+			})
 		})
 	</script>
 {% endblock footer_script %}

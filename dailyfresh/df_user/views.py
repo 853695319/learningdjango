@@ -204,6 +204,7 @@ def info(request):
     context = {
         'title': '用户中心',
         'user_page': 1,
+        'user_page_main_con': 2,
         'user_name': userinfo.uname,
         'user_email': userinfo.umail,
         'goods_list': goods_list
@@ -216,6 +217,7 @@ def order(request):
     context = {
         'title': '用户中心',
         'user_page': 1,
+        'user_page_main_con': 2,
     }
     return render(request, 'df_user/user_center_order.html', context)
 
@@ -236,5 +238,6 @@ def site(request):
         'title': '用户中心',
         'user': userinfo,
         'user_page': 1,
+        'user_page_main_con': 2,
     }
     return render(request, 'df_user/user_center_site.html', context)

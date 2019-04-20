@@ -1,4 +1,15 @@
 {% extends 'base_foot.html' %}
+{% block base_head %}
+<script>
+    $(function () {
+        var url = "{% url 'df_cart:update_cart' %}";
+        $.get(url, function (data) {
+            $('#show_count').text(data.count);
+            console.log('base-count:'+data.count);
+        });
+    });
+</script>
+{% endblock base_head %}
 {% block body %}
 <body>
     <div class="header_con">
@@ -32,9 +43,11 @@
 
 	<div class="search_bar clearfix">
             <a href="/" class="logo fl"><img src="/static/images/logo.png"></a>
+        <!-- 用户中心 -->
         {% if user_page == 1 %}
             <div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
         {% endif %}
+            <!-- 用户和商品的搜索位置不同 -->
             {% if goods_page == 1 %}
             <div class="search_con fl">
             {% else %}
@@ -46,15 +59,18 @@
         {% if goods_page == 1 %}
         <div class="guest_cart fr">
             <a href="{% url 'df_cart:cart' %}" class="cart_name fl">我的购物车</a>
-            <div class="goods_count fl" id="show_count">1</div>
+            <div class="goods_count fl" id="show_count">0</div>
         </div>
         {% endif %}
     </div>
+    <!-- 主页 详情 列表 -->
     {% if goods_page == 1 %}
     <div class="navbar_con">
+        <!-- 主页 -->
         {% if goods_index == 1 %}
         <div class="navbar">
             <h1 class="fl">全部商品分类</h1>
+        <!-- 详情 列表 -->
         {% elif goods_index == 2 %}
         <div class="navbar clearfix">
             <div class="subnav_con fl">
@@ -84,7 +100,8 @@
     {% block df_goods_content %}
     {% endblock df_goods_content%}
 
-    {% if user_page == 1 %}
+    <!-- 用户中心info site order 继承 -->
+    {% if user_page_main_con == 2 %}
     <div class="main_con clearfix">
             <div class="left_menu_con clearfix">
                 <h3>用户中心</h3>

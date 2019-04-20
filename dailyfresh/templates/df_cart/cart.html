@@ -10,74 +10,129 @@
 			$input = $('input.num_show');
 			$sumPrice = $('ul.settlements li.col03 em');
 		
+		// 初始化
+		$input.each(function () {
+			var num = parseInt($(this).val());
+			totalValue.call(this, num);
+		});
 		sumGoodsPrice();
 
+		// 增加
 		$add.click(function () {
 			$(this).prev('input').val(function (index, value) {
 				num =  1 + parseInt(value);
+				if (num >= 100) {
+					alert('数量不能超过100');
+					num = 99;
+				}
 				totalValue.call(this, num);
 				sumGoodsPrice();
+				editCart.call(this, num);
 				return num;
 			});
 		});
-
+		// 减少
 		$minus.click(function () {
 			$(this).next('input').val(function (index, value) {
-				num =  parseInt(value);
-				if (num > 1) {
-					num--;
-					totalValue.call(this, num);
-					sumGoodsPrice();
-				} else {
-					num = 1
+				num =  parseInt(value) - 1;
+				if (num < 1) {
+					alert('数量不能为0');
+					num = 1;
 				}
+				totalValue.call(this, num);
+				sumGoodsPrice();
+				editCart.call(this, num);
 				return num;
 			});
 		});
-
+		// 手动通过input
 		$input.change(function () {
 			var	num = parseInt($(this).val());
-			if (num < 1) {
-				$(this).val(1);
+			if (isNaN(num)) {
+				alert('请填入正确数字');
+				$(this).focus();  // 获得焦点
+				return;
+			} else if (num < 1) {
+				alert('数量不能为0');
+				$(this).focus();  // 获得焦点
 				num = 1;
+			} else if (num >= 100) {
+				alert('数量不能超过100');
+				$(this).focus();  // 获得焦点
+				num = 99;
 			}
 			totalValue.call(this, num);
 			sumGoodsPrice();
+			$(this).val(num);
+			editCart.call(this, num);
 
 		});
 
-		// 商品数量
-		$('.settlements .col03 b').text($input.length);
-		$('.total_count em').text($input.length);
+		// 全选 全消
+		$('#checked_all').click(function () {
+			// 用prop方法
+			var status = $('#checked_all').prop('checked');
+			$(':checkbox:not(#checked_all)').prop('checked', status);
+			sumGoodsPrice();
+		});
 
+		// 部分选择时，取消全选
+		$(':checkbox:not(#checked_all)').click(function () {
+			if ($(this).prop('checked')) {
+				// 判断这个选中后是不是就是全选了,+1是因为没全选
+				if ($(':checked').length+1 == $(':checkbox').length) {
+					$('#checked_all').prop('checked', true);
+				}
+			} else {
+				// 这个checkbox未选中
+				$('#checked_all').prop('checked', false);
+			}
+			sumGoodsPrice();
+			
+		});
+
+		// function
 		// 商品小计
 		function totalValue(num) {
-			var price = parseFloat($(this).closest('li').siblings('li.col05').text());
-			$(this).closest('li').siblings('li.col07').text(function () {
-				var sum = price*100 * num / 100;
-				// console.log(
-				// 	'price:'+price,
-				// 	'num:'+num,
-				// 	'sum:'+sum
-				// )
-				return sum.toFixed(2) + '元';
+			// 计算小计
+			var self = this;
+			var price = parseFloat($(self).closest('li').siblings('li.col05').text());
+			var sum = price*100 * num / 100;
+			$(self).closest('li').siblings('li.col07').text(sum.toFixed(2) + '元');
+		}
+
+		function editCart(num) {
+			var self = this;
+			var cartId = $(self).parents('ul.cart_list_td').attr('id');
+			var url = "/cart/edit-"+cartId+'-'+num+'/';
+			$.get(url, function (data) {
+				if (data.ok != 0){
+					// 失败，重置当前列
+					totalValue.call(self, data.ok);
+					$(self).val(data.ok);
+					sumGoodsPrice();
+				}
 			});
+
 		}
 
 		// 商品价格总计
 		function sumGoodsPrice() {
 			// 清空商品总计
 			$sumPrice.empty();
-
-			// 累加商品小计
 			var sum = 0;
-			$('.cart_list_td .col07').each(function (i, e) {
-				var goodCount = parseFloat($(this).text());
-				// console.log('price:'+goodCount);
-				sum = (sum*100 + goodCount*100) / 100;
-				// console.log('sum:'+sum);
-			})
+
+			// 计算已选中商品总额
+			$(':checked:not(#checked_all)').each(function () {
+				var goodSum = parseFloat($(this).parent().siblings('li.col07').text())
+				sum = (sum*100 + goodSum*100) / 100;
+			});
+			// 选中商品总价
 			$sumPrice.text(sum.toFixed(2));
+
+			// 商品数量
+			$('.settlements .col03 b').text($(':checked:not(#checked_all)').length);
+			$('.total_count em').text($(':checked:not(#checked_all)').length);
 		}
 
 	});
@@ -94,16 +149,18 @@
 		<li class="col06">操作</li>
 	</ul>
 {%for cart in cart_set%}
-	<ul class="cart_list_td clearfix">
+	<ul class="cart_list_td clearfix" id="{{ cart.id }}">
 		<li class="col01"><input autocomplete="off" type="checkbox" checked></li>
-		<li class="col02"><img src="/static/{{ cart.goods.gpic }}"></li>
+		<li class="col02">
+			<a href="{% url 'main:detail' cart.goods.id %}"><img src="/static/{{ cart.goods.gpic }}"></a>
+		</li>
 		<li class="col03">{{ cart.goods.gtitle }}<br><em>{{ cart.goods.gprice }}元/{{ cart.goods.gunit }}</em></li>
 		<li class="col04">{{ cart.goods.gunit }}</li>
 		<li class="col05">{{ cart.goods.gprice }}元</li>
 		<li class="col06">
 			<div class="num_add">
 				<a href="javascript:;" class="minus fl">-</a>
-				<input autocomplete="off" type="text" class="num_show fl" value="1">
+				<input autocomplete="off" type="text" class="num_show fl" value="{{ cart.count }}">
 				<a href="javascript:;" class="add fl">+</a>
 			</div>
 		</li>
@@ -130,9 +187,9 @@
 	</ul>
 {% endcomment %}
 	<ul class="settlements">
-		<li class="col01"><input autocomplete="off" type="checkbox" name="" checked=""></li>
+		<li class="col01"><input id="checked_all" autocomplete="off" type="checkbox" checked></li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b></b>件商品</li>
 		<li class="col04"><a href="place_order.html">去结算</a></li>
 	</ul>
-{% endblock df_goods_content%}
+{% endblock df_goods_content %}
