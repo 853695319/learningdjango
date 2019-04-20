@@ -70,3 +70,16 @@ def edit(request, cart_id, count):
     except Exception as err:
         data = {'ok': int(count)}
     return JsonResponse(data)
+
+
+@login_wrapper
+def delete(request, cart_id):
+    try:
+        cartinfo = CartInfo.objects.get(id=int(cart_id))
+        cartinfo.delete()
+        data = {'delete': 1}
+    except Exception as err:
+        data = {'delete': 0}
+    return  JsonResponse(data)
+
+

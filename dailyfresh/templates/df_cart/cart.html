@@ -91,6 +91,13 @@
 			
 		});
 
+		// 删除
+		$('li.col08 a').click(function () {
+			var cartId = $(this).parents('ul.cart_list_td').attr('id');
+			cartDel(cartId);
+		});
+
+
 		// function
 		// 商品小计
 		function totalValue(num) {
@@ -101,13 +108,14 @@
 			$(self).closest('li').siblings('li.col07').text(sum.toFixed(2) + '元');
 		}
 
+		// 异步ajax与数据库通信
 		function editCart(num) {
 			var self = this;
 			var cartId = $(self).parents('ul.cart_list_td').attr('id');
 			var url = "/cart/edit-"+cartId+'-'+num+'/';
 			$.get(url, function (data) {
 				if (data.ok != 0){
-					// 失败，重置当前列
+					// 修改失败，重置当前列
 					totalValue.call(self, data.ok);
 					$(self).val(data.ok);
 					sumGoodsPrice();
@@ -133,6 +141,22 @@
 			// 商品数量
 			$('.settlements .col03 b').text($(':checked:not(#checked_all)').length);
 			$('.total_count em').text($(':checked:not(#checked_all)').length);
+		}
+
+		// 删除商品
+		function cartDel (cartId) {
+			del = confirm('确定要删除吗？');
+			if (del) {
+				var url = "/cart/delete-"+cartId+'/';
+				$.get(url, function (data) {
+					if (data.delete == 1) {
+						// 删除成功
+						// $('#'+cartId).remove();  // 删除节点 ,都可用
+						$('ul').remove('#'+cartId);  // 删除节点
+						sumGoodsPrice();  // 计算总价
+					}
+				});
+			}
 		}
 
 	});
