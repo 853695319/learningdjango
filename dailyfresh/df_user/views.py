@@ -5,6 +5,7 @@ import hashlib
 from django.http import HttpResponseRedirect
 from .user_decorator import login_wrapper
 from df_goods.models import GoodsInfo
+from django.core.paginator import Paginator
 
 
 # 注册
@@ -213,11 +214,26 @@ def info(request):
 
 
 @login_wrapper
-def order(request):
+def order(request, page_num):
+    # 查询订单
+    uid = request.session.get('user_id')
+    user = UserInfo.objects.get(id=uid)
+    order_set = user.orderinfo_set.order_by('-oid')
+
+    # 分页
+    if page_num:
+        num = int(page_num)
+    else:
+        num = 1
+    paginator = Paginator(order_set, 2)
+    page = paginator.page(num)
+
     context = {
         'title': '用户中心',
         'user_page': 1,
         'user_page_main_con': 2,
+        'paginator': paginator,
+        'page': page
     }
     return render(request, 'df_user/user_center_order.html', context)
 

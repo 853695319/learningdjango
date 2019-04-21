@@ -13,5 +13,5 @@ urlpatterns = [
     # 用户中心
     url(r'^info/$', views.info, name='info'),
     url(r'^site/$', views.site, name='site'),
-    url(r'^order/$', views.order, name='order'),
+    url(r'^order(?:(\d+))?/$', views.order, name='order'),
 ]
