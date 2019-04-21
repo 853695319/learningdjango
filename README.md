@@ -747,6 +747,69 @@ INSTALLED_APPS = (
 
 一般做法是上传文件到服务器里，把文件路径记录下来，存到数据库，其实存储的路径就是字符串
 
+>'models.DecimalField' 
+>
+>对应 decimal.Decimal(value='0')
+>'value' can be an integer, string, tuple,
+>or another Decimal object.
+
+>models.DateTimeField(auto_now=True) 对应datetime.datetime
+>
+>[关于可选参数auto_now](http://www.nanerbang.com/article/5488/)
+>
+>注意： auto_now ，默认保存的时区 UTC
+datetime.datetime(2019, 4, 21, 14, 25, 51, 236847, tzinfo=UTC)
+
+>django保存在mysql数据库的时间段是以utc时间来保存的，导致会与实际时间差8小时。读出来的时间你会发现有个tzinfo=<UTC>参数。
+>```
+>t=Trouble.objects.all()[0]
+>t.starttime
+>datetime.datetime(2016, 12, 5, 1, 5, 48, tzinfo=<UTC>)
+>```
+>这时就需要转换为中国的时区了。需要用到pytz库，比较简单
+>```
+>import pytz
+>t.starttime.astimezone(pytz.timezone('Asia/Shanghai'))
+>datetime.datetime(2016, 12, 5, 9, 5, 48, tzinfo=<DstTzInfo 'Asia/Shanghai' CST+8:00:00 STD>)
+>```
+>因为用不到时区这个概念，最好的方法是避免以UTC时区保存。这个以后有时间研究，应该是settings配置的问题。
+>
+>作者：leyu
+>链接：https://www.jianshu.com/p/6f37b1b8abb3
+>来源：简书
+>简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
+
+
+
+>时区转换
+>
+>我们可以先通过utcnow()拿到当前的UTC时间，再转换为任意时区的时间：
+```
+# 拿到UTC时间，并强制设置时区为UTC+0:00:
+>>> utc_dt = datetime.utcnow().replace(tzinfo=timezone.utc)
+>>> print(utc_dt)
+2015-05-18 09:05:12.377316+00:00
+# astimezone()将转换时区为北京时间:
+>>> bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
+>>> print(bj_dt)
+2015-05-18 17:05:12.377316+08:00
+# astimezone()将转换时区为东京时间:
+>>> tokyo_dt = utc_dt.astimezone(timezone(timedelta(hours=9)))
+>>> print(tokyo_dt)
+2015-05-18 18:05:12.377316+09:00
+# astimezone()将bj_dt转换时区为东京时间:
+>>> tokyo_dt2 = bj_dt.astimezone(timezone(timedelta(hours=9)))
+>>> print(tokyo_dt2)
+2015-05-18 18:05:12.377316+09:00
+```
+>时区转换的关键在于，拿到一个datetime时，要获知其正确的时区，然后强制设置时区，作为基准时间。
+>
+>利用带时区的datetime，通过astimezone()方法，可以转换到任意时区。
+>
+>注：不是必须从UTC+0:00时区转换到其他时区，任何带时区的datetime都可以正确转换，例如上述bj_dt到tokyo_dt的转换。
+
+
+
 * 关于字段约束
 
 `null`:就是能不能将`null`存到数据库
@@ -1516,7 +1579,6 @@ def csrf2(request):
 配置booktest/urls.py
 
 
-
 # 用本地IP地址开启服务
 python manage.py runserver 192.168.0.107:8000
 
@@ -1545,6 +1607,32 @@ MIDDLEWARE_CLASSES = (
 </form>
 
 ```
+
+#### POST 
+参考
+[伪造跨站请求保护](https://yiyibooks.cn/__trs__/xx/Django_1.11.6/ref/csrf.html)
+```text
+https://blog.csdn.net/qq_33733970/article/details/78534074
+
+$('#order_btn').click(function () {
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    var url = "{% url 'df_order:handle' %}"
+    $.post(url,
+        {
+            'cart_ids': 13,
+            // 模板生成csrf_token
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        function (data) {
+            alert(data.code);
+        }
+    );
+})
+```
+
+https://docs.djangoproject.com/en/1.11/ref/csrf/
+
+
 ### 验证码
 `{% csrf_token %}`实际还不够强，人家把网页复制过去还是能用
 
@@ -1904,7 +1992,64 @@ celery multi start w1 -A myproject -l info --logfile = celerylog.log --pidfile =
 
 所以需记录w1，即需记录woker的名称来方便重启和停止。
 
+## ajax
+```text
+$.get(url, {'cartid':13}, function(data) {
+    alert(data.code);
+});
+
+请求网址:http://127.0.0.1:8000/order/?cartid=13
+请求方法:GET
+
+dict.get('cartid') -> 13
+
+# 带数组
+$.get(url, {'cartid[]':[13,17]}, function(data) {
+    alert(data.code);
+});
+
+dict.get('cartid[]') -> [13,17]
+
+post同样
+
+```
+
 
 # 天天生鲜
 ## 注册
 账户密码1111111111 10个1
+
+# django时区问题
+[django时间的时区问题](https://www.cnblogs.com/alan-babyblog/p/5739004.html)
+
+在用django1.8版本做项目的时候遇到时间的存储与读取不一致的问题，网上找了很多帖子，但都没有讲明白。本文将在项目中遇到的问题及如何解决的尽可能详细的记录下来，当然本文参考了网上大量相关文章。
+
+在django1.4以后，存在两个概念：naive time 与 active time。简单点讲，naive time就是不带时区的时间，相关Active time就是带时区的时间。举例来说，使用datetime.datetime.utcnow()、datetime.datetime.now()输出的类似2015-05-11 09:10:33.080451就是不带时区的时间（naive time），而使用django.util.timezone.now()输出的类似2015-05-11 09:05:19.936835+00:00的时间就是带时区的时间（Active time），其中+00:00表示的就是时区相对性。
+
+另外一个概念UTC时间。这里不做过多介绍，需要知晓的是UTC时间表示的是格林尼治平均时即可，即零区时间。而北京时间表示的是东八区时间，即UTC+8。
+
+下面列出了几个常见的时区问题，并提供相关原因，如有不对，欢迎指出。
+
+问题一：三个时间datetime.datetime.now()、datetime.datetime.utcnow()与django.util.timezone.now()的区别
+
+datetime.datetime.now()：输出的永远是本地时间（naive time）与配置无任任何关系。datetime.datetime.utcnow()：如果setting中配置USE_TZ=True则输出的是UTC时间（naive time），如果setting中配置USE_TZ=False，则该输出时间与datetime.datetime.now()完全相同。django.util.timezone.now()：如果setting中配置USE_TZ=True则输出的是UTC时间（active time），如果配置USE_TZ=False，则与datetime.datetime.now()完全相同。
+
+问题二：django存储到数据库的时间比本地时间小8个小时？
+
+首先要明确的一点，Django1.4版本之前，对时区毫无概概念，对时间的存取、展示不做任何处理，数据库里存储的通常是本地时间，当然都是naive time。
+
+Django在1.4版本之后存储如果设置了USE_TZ=True，则存储到数据库中的时间永远是UTC时间。这时如果settings里面设置了USE_TZ=True与TIME_ZONE = 'UTC'，用datetime.datetime.now()获取的时间django会把这个时间当成UTC时间存储到数据库中去。如果修改设置为USE_TZ=True与TIME_ZONE = 'Asia/Shanghai'，用datetime.datetime.now()获取的时间由于不带时区，django会把这个时间当成Asia/Shanghai时间，即东八区时间，然后django会把这个时间转成带时区UTC时间存储到数据库中去，而读的时候直接按UTC时间读出来，这就是网上很多人遇到的存储到数据库中的时间比本地时间会小8个小时的原因。
+
+问题三：DateTimeField role_cost_history.cost_time received a naive datetime （2015-05-12 19:59:01.259517) while time zone support is active？
+
+这个问题是因为如果设置了USE_TZ=True之后，model里面认为DateTimeField使用UTC时间（带时区的时间），这时用datetime.datetime.now()获取的时间是不带时区的就会报这个问题。
+
+问题四：django.util.timezone.now()输出时间比本地时间小8个小时
+
+只要设置了USE_TZ=True，django.util.timezone.now()输出地永远是UTC时间，不管你设置的TIME_ZONE是什么。如果USE_TZ=False，则django.util.timezone.now()输出等同于datetime.datetime.now()，也不管TIME_ZONE设置的是什么。
+
+问题五：模板显示时间
+
+在设置了USE_TZ=True之后，如果设置了TIME_ZONE = 'Asia/Shanghai'，尽管数据库中存储的是UTC时间，但在模板显示的时候，会转成TIME_ZONE所示的本地时间进行显示。
+
+建议：为了统一时间，在django开发时，尽量使用UTC时间，即设置USE_TZ=True，TIME_ZONE = 'Asia/Shanghai'，并且在获取时间的时候使用django.util.timezone.now()。因为后台程序使用时间时UTC时间就能满足，也能保证证模板时间的正确显示。

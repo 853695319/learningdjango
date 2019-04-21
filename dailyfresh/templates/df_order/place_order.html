@@ -1,88 +1,152 @@
 {% extends 'base.html' %}
+{% block head %}
+<script>
+	$(function () {
 
+		var countGood = 0;  // 商品件数
+		sumValue = 0;  // 总计
+
+		// 各商品小计
+		$('li.col07').each(function () {
+			var gPrice = parseFloat($(this).siblings('li.col05').text());
+			cCount = parseInt($(this).prev().text());
+			cSum = gPrice * 100 * cCount / 100;
+			$(this).text(cSum.toFixed(2) + '元');
+			countGood++;
+			sumValue += cSum;
+		});
+
+		// 总计
+		$('.total_goods_count em').text(countGood).next().text(sumValue.toFixed(2) + '元');
+		// 实付款
+		$('.total_pay b').text(function () {
+			var transitFee = parseFloat($('.transit b').text());
+			shouldPay = (transitFee * 100 + sumValue * 100) / 100;
+			return shouldPay.toFixed(2) + '元';
+		});
+
+
+		// 提交订单
+		$('#order_btn').click(function () {
+			var cart_ids = []
+			$('.goods_list_td').each(function () {
+				var cartid = $(this).attr('id');
+				cart_ids.push(cartid);
+			});
+			// console.log(cart_ids);
+			var uaddr = $('input[name="uaddr"]').parent().text();
+			var url = "{% url 'df_order:handle' %}"
+			$.post(url,
+				{
+					// 传递数组
+					'cart_ids[]': cart_ids,
+					'total': sumValue,
+					'uaddr': uaddr,
+					// 直接通过模板生成token
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+				function (data) {
+					console.log(data.code);
+				}
+			);
+		});
+
+
+	});
+</script>
+{% endblock head %}
 {% block df_goods_content %}
-	<h3 class="common_title">确认收货地址</h3>
+<h3 class="common_title">确认收货地址</h3>
 
-	<div class="common_list_con clearfix">
-		<dl>
-			<dt>寄送到：</dt>
-			<dd><input type="radio" name="" checked="">北京市 海淀区 东北旺西路8号中关村软件园 （李思 收） 182****7528</dd>
-		</dl>
-		<a href="user_center_site.html" class="edit_site">编辑收货地址</a>
+<div class="common_list_con clearfix">
+	<dl>
+		<dt>寄送到：</dt>
+		{% if user.uaddress %}
+		<!-- 看来以后还可以弄个地址本记录地址，将 地址id放到redio.value -->
+		<dd><input type="radio" name="uaddr">{{ user.uaddress }} （{{ user.ushou }} 收） {{ user.uphone }}</dd>
+		{% else %}
+		<dd>(空)</dd>
+		{% endif %}
+	</dl>
+	<a href="{% url 'user:site' %}" class="edit_site">编辑收货地址</a>
 
+</div>
+
+<h3 class="common_title">支付方式</h3>
+<div class="common_list_con clearfix">
+	<div class="pay_style_con clearfix">
+		<input type="radio" name="pay_style" id="cash" checked>
+		<label class="cash" for="cash">货到付款</label>
+		<input type="radio" name="pay_style">
+		<label class="weixin">微信支付</label>
+		<input type="radio" name="pay_style">
+		<label class="zhifubao"></label>
+		<input type="radio" name="pay_style">
+		<label class="bank">银行卡支付</label>
 	</div>
-	
-	<h3 class="common_title">支付方式</h3>	
-	<div class="common_list_con clearfix">
-		<div class="pay_style_con clearfix">
-			<input type="radio" name="pay_style" checked>
-			<label class="cash">货到付款</label>
-			<input type="radio" name="pay_style">
-			<label class="weixin">微信支付</label>
-			<input type="radio" name="pay_style">
-			<label class="zhifubao"></label>
-			<input type="radio" name="pay_style">
-			<label class="bank">银行卡支付</label>
-		</div>
+</div>
+
+<h3 class="common_title">商品列表</h3>
+
+<div class="common_list_con clearfix">
+	<ul class="goods_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+	</ul>
+	{% for cart in cart_set %}
+	<ul class="goods_list_td clearfix" id="{{ cart.id }}">
+		<li class="col01">{{ forloop.counter }}</li>
+		<li class="col02"><img src="/static/{{ cart.goods.gpic }}"></li>
+		<li class="col03">{{ cart.goods.gtitle }}</li>
+		<li class="col04">{{ cart.goods.gunit }}</li>
+		<li class="col05">{{ cart.goods.gprice }}元</li>
+		<li class="col06">{{ cart.count }}</li>
+		<li class="col07">元</li>
+	</ul>
+	{% endfor %}
+	{% comment %}
+	<ul class="goods_list_td clearfix">
+		<li class="col01">2</li>
+		<li class="col02"><img src="images/goods/goods003.jpg"></li>
+		<li class="col03">大兴大棚草莓</li>
+		<li class="col04">500g</li>
+		<li class="col05">16.80元</li>
+		<li class="col06">1</li>
+		<li class="col07">16.80元</li>
+	</ul>
+	{% endcomment %}
+</div>
+
+<h3 class="common_title">总金额结算</h3>
+
+<div class="common_list_con clearfix">
+	<div class="settle_con">
+		<div class="total_goods_count">共<em>{{ cart_set.count }}</em>件商品，总金额<b>元</b></div>
+		<div class="transit">运费：<b>10元</b></div>
+		<div class="total_pay">实付款：<b>52.60元</b></div>
 	</div>
+</div>
 
-	<h3 class="common_title">商品列表</h3>
-	
-	<div class="common_list_con clearfix">
-		<ul class="goods_list_th clearfix">
-			<li class="col01">商品名称</li>
-			<li class="col02">商品单位</li>
-			<li class="col03">商品价格</li>
-			<li class="col04">数量</li>
-			<li class="col05">小计</li>		
-		</ul>
-		<ul class="goods_list_td clearfix">
-			<li class="col01">1</li>			
-			<li class="col02"><img src="images/goods/goods012.jpg"></li>
-			<li class="col03">奇异果</li>
-			<li class="col04">500g</li>
-			<li class="col05">25.80元</li>
-			<li class="col06">1</li>
-			<li class="col07">25.80元</li>	
-		</ul>
-		<ul class="goods_list_td clearfix">
-			<li class="col01">2</li>			
-			<li class="col02"><img src="images/goods/goods003.jpg"></li>
-			<li class="col03">大兴大棚草莓</li>
-			<li class="col04">500g</li>
-			<li class="col05">16.80元</li>
-			<li class="col06">1</li>
-			<li class="col07">16.80元</li>	
-		</ul>
-	</div>
-
-	<h3 class="common_title">总金额结算</h3>
-
-	<div class="common_list_con clearfix">
-		<div class="settle_con">
-			<div class="total_goods_count">共<em>2</em>件商品，总金额<b>42.60元</b></div>
-			<div class="transit">运费：<b>10元</b></div>
-			<div class="total_pay">实付款：<b>52.60元</b></div>
-		</div>
-	</div>
-
-	<div class="order_submit clearfix">
-		<a href="javascript:;" id="order_btn">提交订单</a>
-	</div>	
+<div class="order_submit clearfix">
+	<a href="javascript:;" id="order_btn">提交订单</a>
+</div>
 {% endblock df_goods_content %}
 {% block footer_part1 %}
-	<div class="popup_con">
-		<div class="popup">
-			<p>订单提交成功！</p>
-		</div>
-		
-		<div class="mask"></div>
+<div class="popup_con">
+	<div class="popup">
+		<p>订单提交成功！</p>
 	</div>
+
+	<div class="mask"></div>
+</div>
 {% endblock footer_part1 %}
 
 {% block footer_script %}
 
-	<script type="text/javascript" src="/static/js/jquery-1.12.2.js"></script>
+<!-- <script type="text/javascript" src="/static/js/jquery-1.12.2.js"></script>
 	<script type="text/javascript">
 		$('#order_btn').click(function() {
 			localStorage.setItem('order_finish',2);
@@ -91,11 +155,11 @@
 
 				setTimeout(function(){
 					$('.popup_con').fadeOut('fast',function(){
-						window.location.href = 'index.html';
+						window.location.href = '/';
 					});	
 				},3000)
 				
 			});
-		});
-	</script>
+		}); -->
+</script>
 {% endblock footer_script %}

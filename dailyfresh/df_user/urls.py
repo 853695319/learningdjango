@@ -10,7 +10,8 @@ urlpatterns = [
     # login
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.logout, name='logout'),
+    # 用户中心
     url(r'^info/$', views.info, name='info'),
+    url(r'^site/$', views.site, name='site'),
     url(r'^order/$', views.order, name='order'),
-    url(r'^site/$', views.site, name='site')
 ]

@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^user/', include('df_user.urls', namespace='user')),
     url(r'^', include('df_goods.urls', namespace='main')),
     url(r'^cart/', include('df_cart.urls', namespace='df_cart')),
-    url(r'^order/$', include('df_order.urls', namespace='df_order')),
+    url(r'^order/', include('df_order.urls', namespace='df_order')),
 ]
