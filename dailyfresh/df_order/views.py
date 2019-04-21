@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from .models import *
 from .user_decorator import login_wrapper
 from django.db import transaction
@@ -52,39 +52,63 @@ def order_handle(request):
     # test post
     # print("{0}\n{1}".format('*'*10, cart_ids))
     # if cart_ids:
-    #     data = {'code': 200}
+    #     data = {'url': reverse('user:order')}
     # else:
-    #     date = {'code': 404}
-
+    #     date = {'url': 404}
+    # return JsonResponse(data)
 
     try:
         # 1 创建订单对象
         orderinfo = OrderInfo()
-        now = datetime.datetime.now()
-        uid = request.session.get('user_id')
+
         # 订单编号由日期+用户id构成
         # __format__或strftime,将datetime实例按格式生成字符串
+        now = datetime.datetime.now()
+        uid = request.session.get('user_id')
         orderinfo.oid = '{}{}'.format(now.__format__('%Y%m%d%H%M%S'), uid)
         print("{0}\n{1}".format('*'*10, orderinfo.oid))
+
+        # 用户
         orderinfo.user_id = uid
-        # 高精度浮点数
+
+        # 总计 高精度浮点数
         orderinfo.ototal = decimal.Decimal(request.POST.get('total'))
-        # 我没有设在odate，我想看他会不会自己生成
+
+        # 收获地址
+        orderinfo.oaddr = request.POST.get('uaddr')
+
+        # odate在每次保存时会自动设置，且时区为UTC，慢8小时，不过不影响，反正这个时间在后台也不显示的
+        # 时区转换 time.astimezone(pytz.timezone('Asia/Shanghai'))
         orderinfo.save()
 
-        # 创建详单对象
+        # 2 判断库存并创建详单对象
         for cid in cart_ids:
-            detailinfo = OrderDetailInfo()
             cart = CartInfo.objects.get(id=cid)
-            detailinfo.goods = cart.goods
-            detailinfo.order = orderinfo
-            detailinfo.price = cart.goods.gprice
-            detailinfo.count = cart.count
 
+            # 判断库存,库存大于购买
+            if cart.count <= cart.goods.gkucun:
+                # 减少库存
+                cart.goods.gkucun -= cart.count
+                # 保存！！
+                cart.goods.save()
+                # 创建详情信息
+                detailinfo = OrderDetailInfo()
+                detailinfo.goods = cart.goods
+                detailinfo.order = orderinfo
+                detailinfo.price = cart.goods.gprice
+                detailinfo.count = cart.count
+                detailinfo.save()
+                # 删除购物车信息
+                cart.delete()
+            else:  # 库存小于购买
+                transaction.savepoint_rollback(tran_id)
+                return JsonResponse({'url': cid})  # 库存问题
+        # 全部详情对象创建成功
+        transaction.savepoint_commit(tran_id)
     except Exception as err:
         # 如果出现异常
         print("{0}\n{1}".format('*'*10, err))
-        # tran_id.
+        transaction.savepoint_rollback(tran_id)
 
-    return JsonResponse(data)
+    return JsonResponse({'url': reverse('user:order')})
 

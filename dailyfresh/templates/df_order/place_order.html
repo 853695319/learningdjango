@@ -28,7 +28,8 @@
 
 		// 提交订单
 		$('#order_btn').click(function () {
-			var cart_ids = []
+			var self = this;
+			var cart_ids = [];
 			$('.goods_list_td').each(function () {
 				var cartid = $(this).attr('id');
 				cart_ids.push(cartid);
@@ -40,16 +41,28 @@
 				{
 					// 传递数组
 					'cart_ids[]': cart_ids,
-					'total': sumValue,
+					'total': parseFloat($('.total_pay b').text()),
 					'uaddr': uaddr,
 					// 直接通过模板生成token
 					csrfmiddlewaretoken: '{{ csrf_token }}'
 				},
 				function (data) {
-					console.log(data.code);
+					console.log(data.url);
+					if (isNaN(data.url)) {  // true 不是cid
+						// $(self).attr('href',data.url);
+						// location.href这个没实现跳转
+						window.location.href = data.url;
+					} else {
+						var errGood = $('.goods_list_td[id='+data.url+']').children('li.col03').text();
+						alert(errGood+'库存不足,请到购物车修改数量');
+						window.location.href = "{% url 'df_cart:cart' %}";
+					}
 				}
 			);
 		});
+
+		// 我自己调用一次
+		// $('#order_btn').click();
 
 
 	});
@@ -63,7 +76,7 @@
 		<dt>寄送到：</dt>
 		{% if user.uaddress %}
 		<!-- 看来以后还可以弄个地址本记录地址，将 地址id放到redio.value -->
-		<dd><input type="radio" name="uaddr">{{ user.uaddress }} （{{ user.ushou }} 收） {{ user.uphone }}</dd>
+		<dd><input type="radio" name="uaddr" checked>{{ user.uaddress }} （{{ user.ushou }} 收） {{ user.uphone }}</dd>
 		{% else %}
 		<dd>(空)</dd>
 		{% endif %}
