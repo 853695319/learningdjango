@@ -37,15 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 插件
+    'ckeditor',
 
     # 应用
     'df_user',
     'df_goods',
     'df_cart',
-
-    # 插件
-    'ckeditor',
-
+    'df_order',
 ]
 
 MIDDLEWARE = [

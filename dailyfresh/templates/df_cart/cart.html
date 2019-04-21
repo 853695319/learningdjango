@@ -97,6 +97,30 @@
 			cartDel(cartId);
 		});
 
+		// 商品结算
+		$('ul.settlements li.col04 a').click(function () {
+			var $mycheckbox = $(':checked:not(#checked_all)');
+			if ($mycheckbox.length == 0) {
+				alert('请选择至少一样商品后再进行结算');
+				return false;
+			}
+			var url = [];
+			$mycheckbox.each(function () {
+				var cartId = $(this).parents('ul.cart_list_td').attr('id');
+				// console.log('cartid'+cartId);
+				if (url.length == 0) {
+					url.push('?cartid='+cartId);
+				} else {
+					url.push('&cartid='+cartId);
+				}
+			});
+			// console.log('url:'+url);
+			var myhref = ["{% url 'df_order:order' %}",url.join("")].join("");
+			// console.log('href:'+myhref);
+			$(this).attr('href', myhref);
+			// location.href=myhref;
+		});
+
 
 		// function
 		// 商品小计
@@ -178,7 +202,11 @@
 		<li class="col02">
 			<a href="{% url 'main:detail' cart.goods.id %}"><img src="/static/{{ cart.goods.gpic }}"></a>
 		</li>
-		<li class="col03">{{ cart.goods.gtitle }}<br><em>{{ cart.goods.gprice }}元/{{ cart.goods.gunit }}</em></li>
+		<li class="col03">
+			{{ cart.goods.gtitle }}<br>
+			<em>{{ cart.goods.gprice }}元/{{ cart.goods.gunit }}</em><br>
+			库存：{{ cart.goods.gkucun }} 件
+		</li>
 		<li class="col04">{{ cart.goods.gunit }}</li>
 		<li class="col05">{{ cart.goods.gprice }}元</li>
 		<li class="col06">
@@ -214,6 +242,6 @@
 		<li class="col01"><input id="checked_all" autocomplete="off" type="checkbox" checked></li>
 		<li class="col02">全选</li>
 		<li class="col03">合计(不含运费)：<span>¥</span><em>42.60</em><br>共计<b></b>件商品</li>
-		<li class="col04"><a href="place_order.html">去结算</a></li>
+		<li class="col04"><a href="javascript:;">去结算</a></li>
 	</ul>
 {% endblock df_goods_content %}
