@@ -214,7 +214,7 @@
 				<a href="/list{{ good_type.id }}-{{ page.previous_page_number }}-{{ sort_id }}/"><上一页</a>
                 {% endif %}
 
-				{% for pindex in paginator.page_range %}
+				{% for pindex in page.paginator.page_range %}
 
 				{% if page.number == pindex %}
 				<a href="#" class="active">{{ pindex }}</a>

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block head %}
+<script>
+	$(function () {
+		$('title').text('天天生鲜-搜索');
+	});
+</script>
+{% endblock head %}
+{% block df_goods_content %}
+    <div class="navbar_con">
+        <div class="navbar clearfix">
+            <div class="subnav_con fl">
+                <h1>全部商品分类</h1>
+                <span></span>
+                <ul class="subnav">
+                    <li><a href="{% url 'main:list' 1 1 1 %}" class="fruit">新鲜水果</a></li>
+                    <li><a href="{% url 'main:list' 2 1 1 %}" class="seafood">海鲜水产</a></li>
+                    <li><a href="{% url 'main:list' 3 1 1 %}" class="meet">猪牛羊肉</a></li>
+                    <li><a href="{% url 'main:list' 4 1 1 %}" class="egg">禽类蛋品</a></li>
+                    <li><a href="{% url 'main:list' 5 1 1 %}" class="vegetables">新鲜蔬菜</a></li>
+                    <li><a href="{% url 'main:list' 6 1 1 %}" class="ice">速冻食品</a></li>
+                </ul>
+            </div>
+            <ul class="navlist fl">
+                <li><a href="/">首页</a></li>
+                <li class="interval">|</li>
+                <li><a href="">手机生鲜</a></li>
+                <li class="interval">|</li>
+                <li><a href="">抽奖</a></li>
+            </ul>
+        </div>
+    </div>
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="javascript:;">搜索结果</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+            <!--     搜索结果如下       -->
+			{% if query %}
+			<ul class="goods_type_list clearfix">
+				{% for g in page.object_list %}
+				<li>
+					<a href="/{{ g.object.id }}/"><img src="/static/{{ g.object.gpic }}"></a>
+					<h4><a href="/{{ g.object.id }}/">{{ g.object.gtitle }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ g.object.gprice }}</span>
+						<span class="unit">{{ g.object.gprice }}/{{ g.object.gunit }}</span>
+						<a href="{% url 'df_cart:add' g.object.id 1 %}" class="add_goods" title="加入购物车"></a>
+					</div>
+				</li>
+				{% endfor %}
+
+			</ul>
+
+			<div class="pagenation">
+                {% if page.has_previous %}
+				<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}"><上一页</a>
+                {% endif %}
+
+				{% for pindex in page.paginator.page_range %}
+				{% if page.number == pindex %}
+				<a href="javascript:;" class="active">{{ pindex }}</a>
+				{% else %}
+				<a href="?q={{ query }}&amp;page={{ pindex }}">{{ pindex }}</a>
+				{% endif %}
+				{% endfor %}
+
+                {% if page.has_next %}
+				<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">下一页></a>
+                {% endif %}
+			</div>
+			{% endif %}
+			<!-- 搜索结果 -->
+		</div>
+	</div>
+{% endblock df_goods_content%}
+

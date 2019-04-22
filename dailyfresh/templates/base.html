@@ -57,8 +57,10 @@
             {% else %}
             <div class="search_con fr">
             {% endif %}
-                <input type="text" class="input_text fl" name="" placeholder="搜索商品">
-                <input type="button" class="input_btn fr" name="" value="搜索">
+            <form action="/search/" method="GET" target="_blank">
+                <input type="text" class="input_text fl" name="q" placeholder="搜索商品" autocomplete="off">
+                <input type="submit" class="input_btn fr" value="搜索">
+            </form>
             </div>
         {% if goods_page == 1 %}
         <div class="guest_cart fr">
@@ -81,12 +83,12 @@
                 <h1>全部商品分类</h1>
                 <span></span>
                 <ul class="subnav">
-                    <li><a href="#" class="fruit">新鲜水果</a></li>
-                    <li><a href="#" class="seafood">海鲜水产</a></li>
-                    <li><a href="#" class="meet">猪牛羊肉</a></li>
-                    <li><a href="#" class="egg">禽类蛋品</a></li>
-                    <li><a href="#" class="vegetables">新鲜蔬菜</a></li>
-                    <li><a href="#" class="ice">速冻食品</a></li>
+                    <li><a href="{% url 'main:list' 1 1 1 %}" class="fruit">新鲜水果</a></li>
+                    <li><a href="{% url 'main:list' 2 1 1 %}" class="seafood">海鲜水产</a></li>
+                    <li><a href="{% url 'main:list' 3 1 1 %}" class="meet">猪牛羊肉</a></li>
+                    <li><a href="{% url 'main:list' 4 1 1 %}" class="egg">禽类蛋品</a></li>
+                    <li><a href="{% url 'main:list' 5 1 1 %}" class="vegetables">新鲜蔬菜</a></li>
+                    <li><a href="{% url 'main:list' 6 1 1 %}" class="ice">速冻食品</a></li>
                 </ul>
             </div>
         {% endif %}

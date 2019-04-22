@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 插件
     'ckeditor',
+    'haystack',
 
     # 应用
     'df_user',
@@ -140,3 +141,19 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 MEDIA_ROOT = os.path.join(BASE_DIR, "static")
 # 考虑到将来部署 收集静态文件到部署目录
 # MEDIA_ROOT = 'var/www/dailyfresh/static'
+
+# 全文检索-搜索引擎
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whossh引擎
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+# 自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 搜索结果18条/页
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 12
