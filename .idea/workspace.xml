@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f51538f-ac51-49b6-9535-9b12f47fe93f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dailyfresh/df_goods/search_indexes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dailyfresh/templates/search/indexes/df_goods/goodsinfo_text.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dailyfresh/templates/search/prototype-search.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dailyfresh/templates/search/search.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dailyfresh/templates/search/search-new.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dailyfresh/templates/search/search02.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dailyfresh/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dailyfresh/templates/df_goods/list.html" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/templates/df_goods/list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dailyfresh/df_goods/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/df_goods/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dailyfresh/df_goods/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/df_goods/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dailyfresh/df_order/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/df_order/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dailyfresh/templates/search/search.html" beforeDir="false" afterPath="$PROJECT_DIR$/dailyfresh/templates/search/search.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,36 +29,47 @@
     <splitter split-orientation="vertical" split-proportion="0.5">
       <split-first>
         <leaf>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/df_order/urls.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="85">
+                  <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
+                  <folding>
+                    <element signature="e#0#32#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="171">
+                  <caret line="25" column="48" selection-start-line="25" selection-start-column="48" selection-end-line="25" selection-end-column="48" />
+                  <folding>
+                    <element signature="e#644#685#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/urls.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="104">
-                  <caret line="158" column="36" selection-start-line="158" selection-start-column="36" selection-end-line="158" selection-end-column="36" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/search_indexes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="161">
-                  <caret line="12" column="45" selection-start-line="12" selection-start-column="45" selection-end-line="12" selection-end-column="45" />
+                <state relative-caret-position="180">
+                  <caret line="17" selection-start-line="17" selection-end-line="17" />
                   <folding>
-                    <element signature="e#15#43#0" expanded="true" />
+                    <element signature="e#0#32#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/prototype-search.html">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-85">
-                  <caret line="9" column="65" selection-start-line="9" selection-start-column="65" selection-end-line="9" selection-end-column="65" />
-                  <folding>
-                    <element signature="e#452#459#0" expanded="true" />
-                    <element signature="e#626#633#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="76">
+                  <caret line="12" column="38" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
                 </state>
               </provider>
             </entry>
@@ -65,20 +77,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/dailyfresh/templates/base.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="96">
+                <state relative-caret-position="-303">
                   <caret line="60" column="101" selection-start-line="60" selection-start-column="101" selection-end-line="60" selection-end-column="101" />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/urls.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="152">
-                  <caret line="9" column="53" selection-start-line="9" selection-start-column="53" selection-end-line="9" selection-end-column="53" />
-                  <folding>
-                    <element signature="e#0#32#0" expanded="true" />
-                  </folding>
                 </state>
               </provider>
             </entry>
@@ -88,10 +88,22 @@
       <split-second>
         <leaf>
           <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search.html">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/views.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="95">
-                  <caret line="39" column="24" selection-start-line="39" selection-start-column="24" selection-end-line="39" selection-end-column="24" />
+                <state relative-caret-position="57">
+                  <caret line="174" column="32" lean-forward="true" selection-start-line="174" selection-start-column="32" selection-end-line="174" selection-end-column="32" />
+                  <folding>
+                    <element signature="e#0#35#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search-new.html">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="361">
+                  <caret line="19" column="34" selection-start-line="19" selection-start-column="34" selection-end-line="19" selection-end-column="34" />
                 </state>
               </provider>
             </entry>
@@ -125,8 +137,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/proj/proj/urls.py" />
-        <option value="$PROJECT_DIR$/proj/proj/celery.py" />
         <option value="$PROJECT_DIR$/proj/proj/settings.py" />
         <option value="$PROJECT_DIR$/myproject/myproject/settings.py" />
         <option value="$PROJECT_DIR$/myproject/myproject/celery.py" />
@@ -147,7 +157,6 @@
         <option value="$PROJECT_DIR$/dailyfresh/static/js/slide.js" />
         <option value="$PROJECT_DIR$/dailyfresh/df_goods/models.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_user/user_decorator.py" />
-        <option value="$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/base_foot.html" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_user/register.html" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_user/login.html" />
@@ -155,14 +164,11 @@
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_goods/detail.html" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_user/user_center_info.html" />
         <option value="$PROJECT_DIR$/dailyfresh/df_cart/models.py" />
-        <option value="$PROJECT_DIR$/dailyfresh/df_goods/views.py" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_goods/list.html" />
-        <option value="$PROJECT_DIR$/dailyfresh/df_goods/urls.py" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_cart/cart.html" />
         <option value="$PROJECT_DIR$/dailyfresh/df_cart/views.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_cart/urls.py" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/df_order/place_order.html" />
-        <option value="$PROJECT_DIR$/dailyfresh/df_order/urls.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/dailyfresh/df_cart/admin.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_order/admin.py" />
@@ -170,12 +176,18 @@
         <option value="$PROJECT_DIR$/dailyfresh/df_order/models.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_user/urls.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_user/views.py" />
-        <option value="$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py" />
         <option value="$PROJECT_DIR$/dailyfresh/df_goods/search_indexes.py" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/search/indexes/df_goods/goodsinfo_text.txt" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/base.html" />
         <option value="$PROJECT_DIR$/dailyfresh/templates/search/search.html" />
         <option value="$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py" />
+        <option value="$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html" />
+        <option value="$PROJECT_DIR$/dailyfresh/templates/search/search-myview.html" />
+        <option value="$PROJECT_DIR$/dailyfresh/df_order/urls.py" />
+        <option value="$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py" />
+        <option value="$PROJECT_DIR$/dailyfresh/templates/search/search-new.html" />
+        <option value="$PROJECT_DIR$/dailyfresh/df_goods/views.py" />
+        <option value="$PROJECT_DIR$/dailyfresh/df_goods/urls.py" />
       </list>
     </option>
   </component>
@@ -210,19 +222,20 @@
               <item name="learningdjango" type="b2602c69:ProjectViewProjectNode" />
               <item name="learningdjango" type="462c0819:PsiDirectoryNode" />
               <item name="dailyfresh" type="462c0819:PsiDirectoryNode" />
-              <item name="dailyfresh" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="learningdjango" type="b2602c69:ProjectViewProjectNode" />
-              <item name="learningdjango" type="462c0819:PsiDirectoryNode" />
-              <item name="dailyfresh" type="462c0819:PsiDirectoryNode" />
-              <item name="df_goods" type="462c0819:PsiDirectoryNode" />
+              <item name="df_order" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="learningdjango" type="b2602c69:ProjectViewProjectNode" />
               <item name="learningdjango" type="462c0819:PsiDirectoryNode" />
               <item name="dailyfresh" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="learningdjango" type="b2602c69:ProjectViewProjectNode" />
+              <item name="learningdjango" type="462c0819:PsiDirectoryNode" />
+              <item name="dailyfresh" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="search" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="learningdjango" type="b2602c69:ProjectViewProjectNode" />
@@ -246,7 +259,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/dailyfresh/templates/search" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="reference.idesettings.emmet" />
     <property name="two.files.diff.last.used.file" value="$PROJECT_DIR$/test2/booktest/models.py" />
   </component>
   <component name="RecentsManager">
@@ -290,13 +303,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1553979071074</updated>
-    </task>
-    <task id="LOCAL-00015" summary="MVT-模板：项目4 注册模型">
-      <created>1554692010230</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1554692010230</updated>
     </task>
     <task id="LOCAL-00016" summary="MVT-模板：项目4 硬编码链接">
       <created>1554711298510</created>
@@ -634,7 +640,14 @@
       <option name="project" value="LOCAL" />
       <updated>1555871661716</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="dailyfresh: 全文检索完成">
+      <created>1555924772187</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1555924772187</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TodoView">
@@ -647,8 +660,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1299" height="743" extended-state="6" />
-    <editor active="true" />
+    <frame x="67" y="25" width="1299" height="743" extended-state="7" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4924875" visible="true" weight="0.18303221" />
       <window_info id="Structure" order="1" sideWeight="0.5075125" side_tool="true" weight="0.18303221" />
@@ -741,7 +753,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="dailyfresh:完成register.html" />
     <MESSAGE value="dailyfresh: 完成register注册功能" />
     <MESSAGE value="dailyfresh: bug：没有正确填写信息也能提交" />
     <MESSAGE value="dailyfresh: 完成info.html" />
@@ -766,23 +777,10 @@
     <MESSAGE value="dailyfresh: 1 ajax-post+window.location.href实现数据提交，再根据返回的数据跳转页面&#10;2 post 难点在csrf，注意这次实现的参数以数组传递给后端" />
     <MESSAGE value="dailyfresh: 1 ajax-post+window.location.href实现数据提交，再根据返回的数据跳转页面&#10;2 post 难点在csrf，注意这次实现的参数以数组传递给后端&#10;3 事务操作transaction" />
     <MESSAGE value="dailyfresh: 用户中心订单页完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="dailyfresh: 用户中心订单页完成" />
+    <MESSAGE value="dailyfresh: 全文检索完成" />
+    <option name="LAST_COMMIT_MESSAGE" value="dailyfresh: 全文检索完成" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/天天生鲜项目页面/js/slide.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="42" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/static/js/slide.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="42" selection-start-line="7" selection-start-column="42" selection-end-line="7" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/天天生鲜项目页面/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="339">
@@ -814,13 +812,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="57">
           <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
     </entry>
@@ -919,16 +910,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
           <caret line="22" column="45" selection-start-line="22" selection-start-column="45" selection-end-line="22" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/df_order/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="53" selection-start-line="7" selection-start-column="53" selection-end-line="7" selection-end-column="53" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1058,16 +1039,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="28" column="14" selection-start-line="28" selection-start-column="14" selection-end-line="28" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test6/booktest/search_indexes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19">
@@ -1095,16 +1066,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search.html">
+    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search02.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="95">
           <caret line="39" column="24" selection-start-line="39" selection-start-column="24" selection-end-line="39" selection-end-column="24" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/df_goods/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="44" selection-start-line="12" selection-start-column="44" selection-end-line="12" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/search_indexes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="228">
+          <caret line="12" column="45" selection-start-line="12" selection-start-column="45" selection-end-line="12" selection-end-column="45" />
+          <folding>
+            <element signature="e#15#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/prototype-search.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-85">
+        <state relative-caret-position="157">
           <caret line="9" column="65" selection-start-line="9" selection-start-column="65" selection-end-line="9" selection-end-column="65" />
           <folding>
             <element signature="e#452#459#0" expanded="true" />
@@ -1113,47 +1101,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py">
+    <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="25" column="44" selection-start-line="25" selection-start-column="44" selection-end-line="25" selection-end-column="44" />
-          <folding>
-            <element signature="e#644#685#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="434">
+          <caret line="158" column="37" selection-start-line="158" selection-start-column="37" selection-end-line="158" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dailyfresh/templates/base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
+        <state relative-caret-position="-303">
           <caret line="60" column="101" selection-start-line="60" selection-start-column="101" selection-end-line="60" selection-end-column="101" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/urls.py">
+    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search-new.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="9" column="53" selection-start-line="9" selection-start-column="53" selection-end-line="9" selection-end-column="53" />
+        <state relative-caret-position="361">
+          <caret line="19" column="34" selection-start-line="19" selection-start-column="34" selection-end-line="19" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dailyfresh/templates/search/search.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="76">
+          <caret line="12" column="38" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="57">
+          <caret line="174" column="32" lean-forward="true" selection-start-line="174" selection-start-column="32" selection-end-line="174" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dailyfresh/df_order/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="8" column="18" selection-start-line="8" selection-start-column="18" selection-end-line="8" selection-end-column="18" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/search_indexes.py">
+    <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="12" column="45" selection-start-line="12" selection-start-column="45" selection-end-line="12" selection-end-column="45" />
+        <state relative-caret-position="171">
+          <caret line="25" column="48" selection-start-line="25" selection-start-column="48" selection-end-line="25" selection-end-column="48" />
           <folding>
-            <element signature="e#15#43#0" expanded="true" />
+            <element signature="e#644#685#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dailyfresh/dailyfresh/settings.py">
+    <entry file="file://$PROJECT_DIR$/dailyfresh/df_goods/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="158" column="36" selection-start-line="158" selection-start-column="36" selection-end-line="158" selection-end-column="36" />
+        <state relative-caret-position="180">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

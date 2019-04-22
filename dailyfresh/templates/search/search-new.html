@@ -17,7 +17,7 @@
             <!--     搜索结果如下       -->
 			{% if query %}
 			<ul class="goods_type_list clearfix">
-				{% for g in page.object_list %}
+				{% for g in page_obj.object_list %}
 				<li>
 					<a href="/{{ g.object.id }}/"><img src="/static/{{ g.object.gpic }}"></a>
 					<h4><a href="/{{ g.object.id }}/">{{ g.object.gtitle }}</a></h4>
@@ -32,20 +32,20 @@
 			</ul>
 
 			<div class="pagenation">
-                {% if page.has_previous %}
-				<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}"><上一页</a>
+                {% if page_obj.has_previous %}
+				<a href="?q={{ query }}&amp;page={{ page_obj.previous_page_number }}"><上一页</a>
                 {% endif %}
 
-				{% for pindex in page.paginator.page_range %}
-				{% if page.number == pindex %}
+				{% for pindex in page_obj.paginator.page_range %}
+				{% if page_obj.number == pindex %}
 				<a href="javascript:;" class="active">{{ pindex }}</a>
 				{% else %}
 				<a href="?q={{ query }}&amp;page={{ pindex }}">{{ pindex }}</a>
 				{% endif %}
 				{% endfor %}
 
-                {% if page.has_next %}
-				<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">下一页></a>
+                {% if page_obj.has_next %}
+				<a href="?q={{ query }}&amp;page={{ page_obj.next_page_number }}">下一页></a>
                 {% endif %}
 			</div>
 			{% endif %}

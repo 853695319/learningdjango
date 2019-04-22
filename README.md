@@ -1794,6 +1794,31 @@ test7 superuser: root qew96898
 * without jieba
 
 在test7，我没有安jango-haystack+jieba装`jieba`,也可以搜索中文，但是结果更加糟糕，好像只能匹配开头的‘中国’
+#### 自定义view函数，返回上下文对象配合模板继承
+在对应的应用目录下
+```
+# views.py
+from haystack.generic_views import SearchView  # 2.4.0 以后 模板上最大的不同在于page-> page_obj
+
+
+class JohnSearchView(SearchView):
+    template_name = 'search/search-new.html'  # 可以选择模板
+
+    def get_context_data(self, *args, **kwargs):
+        extra = super(JohnSearchView, self).get_context_data(*args, **kwargs)
+        # 补充上下文
+        extra['title'] = '搜索'
+        extra['goods_page'] = 1
+        extra['goods_index'] = 2
+        return extra
+
+# urls.py
+url(r'^search/?$', views.JohnSearchView.as_view(), name='haystack_search'),
+
+# templates/search/search-new.html
+和教程里的区别在于 page改为page_obj
+这个改好就可以用了
+```
 
 ### celery
 * 本地环境

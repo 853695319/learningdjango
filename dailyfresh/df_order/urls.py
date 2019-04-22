@@ -3,7 +3,8 @@ from . import views
 
 
 urlpatterns = [
-    # /order/?cartid=cartid&...
+    # GET /order/?cartid=cartid&...
     url(r'^$', views.order, name='order'),
-    url(r'handle', views.order_handle, name='handle'),
+    # POST
+    url(r'^handle/$', views.order_handle, name='handle'),
 ]

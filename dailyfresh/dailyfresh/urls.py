@@ -22,6 +22,6 @@ urlpatterns = [
     url(r'^', include('df_goods.urls', namespace='main')),
     url(r'^cart/', include('df_cart.urls', namespace='df_cart')),
     url(r'^order/', include('df_order.urls', namespace='df_order')),
-    # 全文索引
-    url(r'^search/', include('haystack.urls')),
+    # 全文索引 直接使用下面方法，用search.html重名为search02.html 没有上下文对象，模板继承不方便
+    # url(r'^search/', include('haystack.urls')),
 ]

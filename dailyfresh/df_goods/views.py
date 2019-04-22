@@ -151,3 +151,33 @@ def goods_list(request, type_id, page_num, sort_id):
         'goods_new': goods_new
     }
     return render(request, 'df_goods/list.html', context)
+
+
+from haystack.views import SearchView as SearchView240  # 2.4.0以前的 page
+
+
+class MySearchView(SearchView240):
+    """补充模板上下文对象实现模板继承"""
+    def extra_context(self):
+        # 继承
+        extra = super(MySearchView, self).extra_context()
+        # 补充上下文
+        extra['title'] = '搜索'
+        extra['goods_page'] = 1
+        extra['goods_index'] = 2
+        return extra
+
+
+from haystack.generic_views import SearchView  # 2.4.0 以后 模板上最大的不同在于page-> page_obj
+
+
+class JohnSearchView(SearchView):
+    template_name = 'search/search-new.html'
+
+    def get_context_data(self, *args, **kwargs):
+        extra = super(JohnSearchView, self).get_context_data(*args, **kwargs)
+        # 补充上下文
+        extra['title'] = '搜索'
+        extra['goods_page'] = 1
+        extra['goods_index'] = 2
+        return extra
