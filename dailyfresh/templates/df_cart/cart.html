@@ -21,9 +21,10 @@
 		$add.click(function () {
 			$(this).prev('input').val(function (index, value) {
 				num =  1 + parseInt(value);
-				if (num >= 100) {
-					alert('数量不能超过100');
-					num = 99;
+				var kucun = parseInt($(this).parents('li.col06').siblings('li.col03').children('span').html())
+				if (num >= kucun) {
+					alert('数量不能超过库存');
+					num = kucun;
 				}
 				totalValue.call(this, num);
 				sumGoodsPrice();
@@ -48,6 +49,7 @@
 		// 手动通过input
 		$input.change(function () {
 			var	num = parseInt($(this).val());
+			var kucun = parseInt($(this).parents('li.col06').siblings('li.col03').children('span').html())
 			if (isNaN(num)) {
 				alert('请填入正确数字');
 				$(this).focus();  // 获得焦点
@@ -56,10 +58,10 @@
 				alert('数量不能为0');
 				$(this).focus();  // 获得焦点
 				num = 1;
-			} else if (num >= 100) {
-				alert('数量不能超过100');
+			} else if (num >= kucun) {
+				alert('数量不能超过库存');
 				$(this).focus();  // 获得焦点
-				num = 99;
+				num = kucun;
 			}
 			totalValue.call(this, num);
 			sumGoodsPrice();
@@ -205,7 +207,7 @@
 		<li class="col03">
 			{{ cart.goods.gtitle }}<br>
 			<em>{{ cart.goods.gprice }}元/{{ cart.goods.gunit }}</em><br>
-			库存：{{ cart.goods.gkucun }} 件
+			库存：<span>{{ cart.goods.gkucun }}</span> 件
 		</li>
 		<li class="col04">{{ cart.goods.gunit }}</li>
 		<li class="col05">{{ cart.goods.gprice }}元</li>

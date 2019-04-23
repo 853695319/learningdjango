@@ -106,7 +106,7 @@ def order_handle(request):
         # 全部详情对象创建成功
         transaction.savepoint_commit(tran_id)
     except Exception as err:
-        # 如果出现异常
+        # 如果出现异常, 该订单不创建，跳转到用户中心我的订单
         print("{0}\n{1}".format('*'*10, err))
         transaction.savepoint_rollback(tran_id)
 

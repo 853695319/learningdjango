@@ -2040,6 +2040,65 @@ post同样
 ```
 
 
+## 部署
+* 注意 DEBUG=Flase 后，静态文件就看不了了，有时候出问题可能在这里！！
+
+>以[官方文档](https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html#deploying-django)为主，快捷方便
+```
+[uwsgi]
+socket=外网ip:端口（使用nginx连接时，使用socket）
+http=外网ip:端口（直接请求uwsgi做web服务器，使用http）
+chdir=项目根目录
+wsgi-file=项目中wsgi.py文件的目录，相对于项目根目录
+processes=4  项目中的进程
+threads=2  项目中的线程
+master=True  当前作为主机运行
+pidfile=uwsgi.pid  以服务的形式运行时，他的PID会记录到pidfile，将来方便关闭服务
+daemonize=uswgi.log  记录日记
+
+在项目根目录下创建uwsgi.ini
+[uwsgi]
+http=127.0.0.1:8000
+chdir=/home/chenzhixiong/09-django/learningdjango/dailyfresh/
+wsgi-file=dailyfresh/wsgi.py
+processes=4
+threads=2
+master=True
+pidfile=uwsgi.pid
+daemonize=uswgi.lo
+
+运行
+uwsgi uwsgi.ini
+检查是否运行
+ps ajx|grep uwsgi
+     1  34791  34790  34790 ?            -1 S     1000   0:00 uwsgi uwsgi.ini
+ 34791  34793  34790  34790 ?            -1 Sl    1000   0:00 uwsgi uwsgi.ini
+ 34791  34794  34790  34790 ?            -1 Sl    1000   0:00 uwsgi uwsgi.ini
+ 34791  34796  34790  34790 ?            -1 Sl    1000   0:00 uwsgi uwsgi.ini
+ 34791  34799  34790  34790 ?            -1 Sl    1000   0:00 uwsgi uwsgi.ini
+ 34791  34801  34790  34790 ?            -1 S     1000   0:00 uwsgi uwsgi.ini
+  4568  34807  34806   4568 pts/1     34806 S+    1000   0:00 grep --color=auto uwsgi
+
+```
+>安装nginx
+
+[beginnersGuide](http://nginx.org/en/docs/beginners_guide.html#control)
+```
+sudo apt-get install nginx
+sudo /etc/init.d/nginx start    # start nginx
+
+[sudo] chenzhixiong 的密码： 
+[ ok ] Starting nginx (via systemctl): nginx.service.
+
+sudo /usr/sbin/nginx -v   # 查看版本
+[sudo] chenzhixiong 的密码： 
+nginx version: nginx/1.14.0 (Ubuntu)
+
+sudo vim /etc/nginx/nginx.conf  # 查看配置
+
+```
+
+
 # 天天生鲜
 ## 注册
 账户密码1111111111 10个1
